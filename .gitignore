@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+playwright_session
+
+campsite_availability_scraper.py
+playwright_script.py
+recreation_gov_scraper.py
+setup_login.py
+test.py
