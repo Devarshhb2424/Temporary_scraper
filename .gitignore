@@ -11,8 +11,6 @@ wheels/
 
 playwright_session
 
-campsite_availability_scraper.py
 playwright_script.py
-recreation_gov_scraper.py
 setup_login.py
 test.py
