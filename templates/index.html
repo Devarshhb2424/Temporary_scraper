@@ -449,9 +449,9 @@
     <form id="state-form" onsubmit="return false;">
         <label for="state">Select State</label>
         <select name="state" id="state" required>
-            <option value="">-- Select a State --</option>
+            <option value="" disabled selected>-- Select a State --</option>
             {% for state in states %}
-                <option value="{{ state.abbreviation }}" {% if state.abbreviation == 'MD' %}selected{% endif %}>
+                <option value="{{ state.abbreviation }}">
                     {{ state.name }} ({{ state.abbreviation }})
                 </option>
             {% endfor %}
@@ -460,12 +460,12 @@
         <div class="date-grid">
             <div>
                 <label for="start-date">Check-in Date</label>
-                <input type="date" id="start-date" required>
+                <input type="date" id="start-date" required placeholder="Select check-in date">
             </div>
 
             <div>
                 <label for="end-date">Check-out Date</label>
-                <input type="date" id="end-date" required>
+                <input type="date" id="end-date" required placeholder="Select check-out date">
             </div>
         </div>
 
@@ -493,16 +493,21 @@
     const cartHoldBanner = document.getElementById('cart-hold-banner');
     const holdCountdown = document.getElementById('hold-countdown');
 
-    // Default to upcoming dates
+    // Restrict dates to today or future
     const today = new Date();
-    const defaultStart = new Date(today);
-    defaultStart.setDate(today.getDate() + 2);
-    const defaultEnd = new Date(today);
-    defaultEnd.setDate(today.getDate() + 6);
+    const todayStr = today.toISOString().split('T')[0];
+    startDateInput.min = todayStr;
+    endDateInput.min = todayStr;
 
-    const fmtDate = (d) => d.toISOString().split('T')[0];
-    startDateInput.value = fmtDate(defaultStart);
-    endDateInput.value = fmtDate(defaultEnd);
+    // Synchronize check-out date minimum with selected check-in date
+    startDateInput.addEventListener('change', function () {
+        if (this.value) {
+            endDateInput.min = this.value;
+            if (endDateInput.value && endDateInput.value < this.value) {
+                endDateInput.value = this.value;
+            }
+        }
+    });
 
     let currentPage = 1;
     let currentStateCode = stateSelect.value || '';
