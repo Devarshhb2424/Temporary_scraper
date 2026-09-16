@@ -489,6 +489,7 @@
     const responseBox = document.getElementById('api-response');
     const sessionDot = document.getElementById('session-dot');
     const sessionLabel = document.getElementById('session-label');
+    const btnLoginSession = document.getElementById('btn-login-session');
     const cartHoldBanner = document.getElementById('cart-hold-banner');
     const holdCountdown = document.getElementById('hold-countdown');
 
@@ -511,6 +512,7 @@
     let currentFacilityId = '';
     let currentDateRange = null;
     let countdownInterval = null;
+    let isCloudMode = false;
 
     function escapeHtml(value = '') {
         return String(value).replace(/[&<>"']/g, (char) => ({
@@ -527,12 +529,28 @@
         try {
             const resp = await fetch('/api/session/status');
             const data = await resp.json();
-            if (data.logged_in) {
+            if (data.is_cloud) {
+                isCloudMode = true;
                 sessionDot.className = 'status-dot dot-green';
-                sessionLabel.textContent = 'Session: Logged In';
+                sessionLabel.innerHTML = 'Direct Booking Mode <span style="font-size: 11px; color: #059669; font-weight: normal;">(Cloud Active)</span>';
+                if (btnLoginSession) {
+                    btnLoginSession.innerHTML = 'Rec.gov Account ↗';
+                    btnLoginSession.title = 'Open Recreation.gov in your browser';
+                }
+            } else if (data.logged_in) {
+                isCloudMode = false;
+                sessionDot.className = 'status-dot dot-green';
+                sessionLabel.textContent = 'Session: Logged In ✓';
+                if (btnLoginSession) {
+                    btnLoginSession.innerHTML = 'Re-link Login';
+                }
             } else {
+                isCloudMode = false;
                 sessionDot.className = 'status-dot dot-red';
                 sessionLabel.textContent = 'Session: Not Logged In';
+                if (btnLoginSession) {
+                    btnLoginSession.innerHTML = '🔑 Log In to Rec.gov';
+                }
             }
         } catch {
             sessionDot.className = 'status-dot dot-red';
@@ -541,16 +559,28 @@
     }
 
     async function triggerLoginSession() {
+        if (isCloudMode) {
+            window.open('https://www.recreation.gov/', '_blank');
+            return;
+        }
+
         alert("Opening a browser window for Recreation.gov login. Please log in with your account so the Auto-Hold bot can access your session.");
         try {
-            await fetch('/api/session/login', { method: 'POST' });
-            // Poll for login status change
+            const resp = await fetch('/api/session/login', { method: 'POST' });
+            const data = await resp.json();
+
+            if (data.is_cloud) {
+                window.open(data.account_url || 'https://www.recreation.gov/', '_blank');
+                return;
+            }
+
+            // Poll for login status change locally
             let attempts = 0;
             const poller = setInterval(async () => {
                 attempts++;
-                const resp = await fetch('/api/session/status');
-                const data = await resp.json();
-                if (data.logged_in) {
+                const sresp = await fetch('/api/session/status');
+                const sdata = await sresp.json();
+                if (sdata.logged_in) {
                     sessionDot.className = 'status-dot dot-green';
                     sessionLabel.textContent = 'Session: Logged In ✓';
                     clearInterval(poller);
@@ -592,7 +622,7 @@
         const btn = document.getElementById(`btn-hold-${campsiteId}`);
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '⏳ Holding in Cart...';
+            btn.innerHTML = '⏳ Processing...';
         }
 
         try {
@@ -608,6 +638,18 @@
             });
 
             const result = await resp.json();
+
+            if (result.is_cloud_direct) {
+                // Cloud deployment: 1-Click direct browser booking in user's logged-in browser
+                startCartCountdown(result.timer_minutes * 60);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '✓ Opening Booking...';
+                    btn.style.background = '#059669';
+                }
+                window.open(result.booking_url, '_blank');
+                return;
+            }
 
             if (result.success) {
                 startCartCountdown(result.timer_minutes * 60);
@@ -631,7 +673,7 @@
                 btn.disabled = false;
                 btn.innerHTML = '⚡ Auto-Hold (15m lock)';
             }
-            alert("Auto-hold error: " + err.message);
+            alert("Booking error: " + err.message);
         }
     }
 

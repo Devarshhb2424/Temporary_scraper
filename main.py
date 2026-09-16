@@ -409,23 +409,50 @@ def serve_home(request: Request):
     )
 
 
+# Cloud deployment detector
+IS_CLOUD_DEPLOYMENT = bool(
+    os.environ.get("RENDER") or
+    os.environ.get("RENDER_SERVICE_ID") or
+    os.environ.get("CLOUD_DEPLOYMENT")
+)
+
+
 @app.get("/api/session/status")
 def get_session_status():
-    """Check if the local Playwright session has active cookies."""
+    """Check session status, adapting to local vs cloud (Render) environment."""
+    if IS_CLOUD_DEPLOYMENT:
+        return {
+            "is_cloud": True,
+            "logged_in": True,
+            "mode": "client_direct",
+            "message": "Cloud Deployment: Direct Browser Booking Active (uses your browser's Recreation.gov login)"
+        }
+
     is_logged_in = check_session_logged_in(SESSION_DIR)
     return {
+        "is_cloud": False,
         "logged_in": is_logged_in,
+        "mode": "local_playwright",
         "session_dir": SESSION_DIR
     }
 
 
 @app.post("/api/session/login")
 def launch_login_browser():
-    """Launch a visible browser window allowing user to log in and save cookies."""
+    """Launch login browser locally, or provide direct link if on Render cloud."""
+    if IS_CLOUD_DEPLOYMENT:
+        return {
+            "status": "cloud_mode",
+            "is_cloud": True,
+            "message": "On Render cloud, please log into Recreation.gov directly in your browser.",
+            "account_url": "https://www.recreation.gov/"
+        }
+
     thread = threading.Thread(target=setup_login_session, daemon=True)
     thread.start()
     return {
         "status": "launched",
+        "is_cloud": False,
         "message": "Login browser window opened. Please log in with your Recreation.gov account."
     }
 
@@ -530,7 +557,20 @@ def get_campsite_availability(
 def trigger_auto_hold(req: HoldRequest):
     """
     Trigger Auto Add-to-Cart bot to hold a campsite in the user's cart for 15 minutes.
+    On Render cloud deployment, returns direct 1-click booking link to user's browser.
     """
+    direct_url = f"https://www.recreation.gov/camping/campsites/{req.campsite_id}?date={req.start_date}"
+
+    if IS_CLOUD_DEPLOYMENT:
+        return {
+            "success": True,
+            "is_cloud_direct": True,
+            "message": "Cloud Mode: Opening campsite booking page in your browser where you are logged in!",
+            "booking_url": direct_url,
+            "cart_url": "https://www.recreation.gov/cart",
+            "timer_minutes": 15
+        }
+
     try:
         success, msg = add_to_cart_and_hold(
             campsite_id=req.campsite_id,
@@ -552,7 +592,7 @@ def trigger_auto_hold(req: HoldRequest):
             return {
                 "success": False,
                 "message": msg,
-                "booking_url": f"https://www.recreation.gov/camping/campsites/{req.campsite_id}"
+                "booking_url": direct_url
             }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
