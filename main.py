@@ -6,14 +6,16 @@ and automated 15-minute cart holding - all unified in a single file.
 """
 
 import argparse
+import io
 import os
 import sys
 import threading
 import time
+import zipfile
 from typing import Optional, List, Dict
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from playwright.sync_api import sync_playwright
@@ -611,6 +613,31 @@ def trigger_auto_hold(req: HoldRequest):
             }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/download/extension")
+def download_extension_zip():
+    """Generates and serves the Chrome Extension as a downloadable zip file."""
+    ext_dir = os.path.join(BASE_DIR, "extension")
+    if not os.path.exists(ext_dir):
+        raise HTTPException(status_code=404, detail="Extension directory not found")
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for root, _, files in os.walk(ext_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, ext_dir)
+                zip_file.write(file_path, arcname)
+    zip_buffer.seek(0)
+
+    return Response(
+        content=zip_buffer.getvalue(),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": "attachment; filename=campsite-finder-extension.zip"
+        }
+    )
 
 
 # =============================================================================
