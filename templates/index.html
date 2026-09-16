@@ -658,10 +658,33 @@
             }
         }
 
+        const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}`;
         const btn = document.getElementById(`btn-hold-${campsiteId}`);
+
+        // Cloud Mode (Render Deployment):
+        // Synchronous window.open is 100% immune to browser popup blockers!
+        if (isCloudMode) {
+            const bookingWindow = window.open(directBookingUrl, '_blank');
+            startCartCountdown(900);
+            if (btn) {
+                btn.innerHTML = '✓ Booking Opened!';
+                btn.style.background = '#059669';
+                setTimeout(() => {
+                    btn.innerHTML = '⚡ 1-Click Book / Lock';
+                    btn.style.background = '';
+                }, 4000);
+            }
+            if (!bookingWindow || bookingWindow.closed || typeof bookingWindow.closed === 'undefined') {
+                // Fallback for extremely strict environments
+                window.location.href = directBookingUrl;
+            }
+            return;
+        }
+
+        // Local Mode: Persistent Playwright Bot
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '⏳ Processing...';
+            btn.innerHTML = '⏳ Bot Holding in Cart...';
         }
 
         try {
@@ -678,18 +701,6 @@
 
             const result = await resp.json();
 
-            if (result.is_cloud_direct) {
-                // Cloud deployment: 1-Click direct browser booking in user's logged-in browser
-                startCartCountdown(result.timer_minutes * 60);
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '✓ Opening Booking...';
-                    btn.style.background = '#059669';
-                }
-                window.open(result.booking_url, '_blank');
-                return;
-            }
-
             if (result.success) {
                 startCartCountdown(result.timer_minutes * 60);
                 if (btn) {
@@ -703,9 +714,7 @@
                     btn.innerHTML = '⚡ Auto-Hold (15m lock)';
                 }
                 alert(`Notice: ${result.message}\nOpening direct booking page instead.`);
-                if (result.booking_url) {
-                    window.open(result.booking_url, '_blank');
-                }
+                window.open(result.booking_url || directBookingUrl, '_blank');
             }
         } catch (err) {
             if (btn) {
@@ -772,9 +781,15 @@
             const totalDays = campsite?.total_requested_days ?? 0;
             const isContinuous = campsite?.is_continuous_stay ?? false;
             const availDates = campsite?.available_dates || '';
-            const bookingUrl = campsite?.booking_url || `https://www.recreation.gov/camping/campsites/${campsite?.CampsiteID || ''}`;
             const imageUrl = campsite?.image_url || '';
             const siteId = campsite?.CampsiteID;
+
+            const dateList = (availDates || '').split(',').map(d => d.trim()).filter(Boolean).sort();
+            let cardStartDate = currentDateRange ? currentDateRange.startDate : '';
+            if (!isContinuous && dateList.length > 0 && !dateList.includes(cardStartDate)) {
+                cardStartDate = dateList[0];
+            }
+            const directBookingUrl = `https://www.recreation.gov/camping/campsites/${siteId}${cardStartDate ? '?date=' + encodeURIComponent(cardStartDate) : ''}`;
 
             const badgeMarkup = isContinuous
                 ? `<span class="badge badge-success">✓ Entire Stay (${availCount}/${totalDays} days)</span>`
@@ -783,6 +798,8 @@
             const imageMarkup = imageUrl
                 ? `<img class="facility-image-photo" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.outerHTML='<div class=\\'facility-image\\'>🏕️</div>'">`
                 : `<div class="facility-image">🏕️</div>`;
+
+            const buttonLabel = isCloudMode ? '⚡ 1-Click Book / Lock' : '⚡ Auto-Hold (15m lock)';
 
             return `
                 <div class="facility-card" data-campsite-id="${escapeHtml(String(siteId))}">
@@ -797,9 +814,9 @@
                         
                         <div class="card-actions">
                             <button type="button" class="btn-hold" id="btn-hold-${escapeHtml(String(siteId))}" onclick="event.stopPropagation(); handleAutoHold('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}', '${escapeHtml(availDates)}', ${isContinuous})">
-                                ⚡ Auto-Hold (15m lock)
+                                ${buttonLabel}
                             </button>
-                            <a class="book-link" href="${escapeHtml(bookingUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">
+                            <a class="book-link" href="${escapeHtml(directBookingUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">
                                 Book on Rec.gov ↗
                             </a>
                         </div>
