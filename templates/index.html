@@ -633,11 +633,29 @@
         countdownInterval = setInterval(updateTimer, 1000);
     }
 
-    async function handleAutoHold(facilityId, campsiteId, campsiteName) {
+    async function handleAutoHold(facilityId, campsiteId, campsiteName, availDates = '', isContinuous = true) {
         const dateRange = getSelectedDateRange();
         if (!dateRange) {
             alert("Please select dates first.");
             return;
+        }
+
+        let targetStartDate = dateRange.startDate;
+        let targetEndDate = dateRange.endDate;
+
+        // If site is partially available, use the site's actual available dates
+        if (!isContinuous && availDates) {
+            const rawDates = availDates.split(',').map(d => d.trim()).filter(Boolean).sort();
+            if (rawDates.length > 0) {
+                if (!rawDates.includes(targetStartDate)) {
+                    targetStartDate = rawDates[0];
+                }
+                if (targetEndDate <= targetStartDate) {
+                    const nextD = new Date(targetStartDate);
+                    nextD.setDate(nextD.getDate() + 1);
+                    targetEndDate = nextD.toISOString().split('T')[0];
+                }
+            }
         }
 
         const btn = document.getElementById(`btn-hold-${campsiteId}`);
@@ -653,8 +671,8 @@
                 body: JSON.stringify({
                     facility_id: facilityId,
                     campsite_id: campsiteId,
-                    start_date: dateRange.startDate,
-                    end_date: dateRange.endDate
+                    start_date: targetStartDate,
+                    end_date: targetEndDate
                 })
             });
 
@@ -778,7 +796,7 @@
                         <div class="dates-preview">📅 Available: ${escapeHtml(availDates)}</div>
                         
                         <div class="card-actions">
-                            <button type="button" class="btn-hold" id="btn-hold-${escapeHtml(String(siteId))}" onclick="event.stopPropagation(); handleAutoHold('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}')">
+                            <button type="button" class="btn-hold" id="btn-hold-${escapeHtml(String(siteId))}" onclick="event.stopPropagation(); handleAutoHold('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}', '${escapeHtml(availDates)}', ${isContinuous})">
                                 ⚡ Auto-Hold (15m lock)
                             </button>
                             <a class="book-link" href="${escapeHtml(bookingUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">

@@ -300,25 +300,40 @@ def add_to_cart_and_hold(
 
                 # 1. Click Start Date cell
                 print(f"[*] Selecting start date cell: '{start_match_str}'...")
-                start_cell = page.locator(f"div.calendar-cell[aria-label*='{start_match_str}'], [aria-label*='{start_match_str}']")
+                start_cell = page.locator(f"div.calendar-cell[aria-label*='{start_match_str}']").first
                 if start_cell.count() > 0:
-                    start_cell.first.scroll_into_view_if_needed()
-                    start_cell.first.click()
+                    # Check if cell is disabled or unavailable
+                    classes = start_cell.get_attribute("class") or ""
+                    aria_disabled = start_cell.get_attribute("aria-disabled") == "true"
+                    if aria_disabled or "is-unavailable" in classes or "firstComeFirstServed" in classes:
+                        print(f"[-] Check-in date '{start_match_str}' is unavailable or First-Come First-Served for this campsite.")
+                        return False, f"Check-in date ({start_date}) is not reservable for this site (it is First-Come/Unavailable). Please choose an available date."
+
+                    start_cell.scroll_into_view_if_needed()
+                    start_cell.click(timeout=6000)
                     page.wait_for_timeout(1000)
                     print("[OK] Start date clicked.")
                 else:
                     print(f"[!] Start date cell '{start_match_str}' not found in calendar.")
+                    return False, f"Start date cell '{start_match_str}' not found in calendar."
 
                 # 2. Click End Date cell
                 print(f"[*] Selecting end date cell: '{end_match_str}'...")
-                end_cell = page.locator(f"div.calendar-cell[aria-label*='{end_match_str}'], [aria-label*='{end_match_str}']")
+                end_cell = page.locator(f"div.calendar-cell[aria-label*='{end_match_str}']").first
                 if end_cell.count() > 0:
-                    end_cell.first.scroll_into_view_if_needed()
-                    end_cell.first.click()
+                    classes = end_cell.get_attribute("class") or ""
+                    aria_disabled = end_cell.get_attribute("aria-disabled") == "true"
+                    if aria_disabled or "is-unavailable" in classes:
+                        print(f"[-] Check-out date '{end_match_str}' is unavailable.")
+                        return False, f"Check-out date ({end_date}) is unavailable for this site."
+
+                    end_cell.scroll_into_view_if_needed()
+                    end_cell.click(timeout=6000)
                     page.wait_for_timeout(1500)
                     print("[OK] End date clicked.")
                 else:
                     print(f"[!] End date cell '{end_match_str}' not found in calendar.")
+                    return False, f"End date cell '{end_match_str}' not found in calendar."
 
                 # Wait for bottom action button to change text to 'Add to Cart'
                 page.wait_for_timeout(1500)
