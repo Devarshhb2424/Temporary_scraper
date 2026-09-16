@@ -574,13 +574,13 @@ def trigger_auto_hold(req: HoldRequest):
     Trigger Auto Add-to-Cart bot to hold a campsite in the user's cart for 15 minutes.
     On Render cloud deployment, returns direct 1-click booking link to user's browser.
     """
-    direct_url = f"https://www.recreation.gov/camping/campsites/{req.campsite_id}?date={req.start_date}"
+    direct_url = f"https://www.recreation.gov/camping/campsites/{req.campsite_id}?date={req.start_date}#autocart={req.start_date},{req.end_date}"
 
     if IS_CLOUD_DEPLOYMENT:
         return {
             "success": True,
             "is_cloud_direct": True,
-            "message": "Cloud Mode: Opening campsite booking page in your browser where you are logged in!",
+            "message": "Cloud Mode: Opening campsite booking page. Click the Auto-Cart Bookmarklet to hold!",
             "booking_url": direct_url,
             "cart_url": "https://www.recreation.gov/cart",
             "timer_minutes": 15

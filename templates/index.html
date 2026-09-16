@@ -333,6 +333,92 @@
             background: #047857;
         }
 
+        .bookmarklet-bar {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .bookmarklet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .bookmarklet-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bookmarklet-draggable {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white !important;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: grab;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .bookmarklet-draggable:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+
+        .bookmarklet-draggable:active {
+            cursor: grabbing;
+        }
+
+        .btn-copy-code, .btn-info-icon {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-copy-code:hover, .btn-info-icon:hover {
+            background: #f1f5f9;
+        }
+
+        .bookmarklet-guide {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .cloud-action-banner {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
         .pager {
             display: flex;
             align-items: center;
@@ -434,7 +520,63 @@
         </button>
     </div>
 
-    <!-- Active Cart Reservation Banner -->
+    <!-- 1-Click Auto-Cart Bookmarklet Bar -->
+    <div class="bookmarklet-bar">
+        <div class="bookmarklet-header">
+            <span style="font-weight: 700; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                ⚡ <b>1-Click Auto-Cart Bookmarklet</b>
+            </span>
+            <span style="font-size: 12px; color: #64748b;">
+                (Drag button to Chrome Bookmarks Bar)
+            </span>
+        </div>
+        <div class="bookmarklet-actions">
+            <a id="bookmarklet-link" href="#" class="bookmarklet-draggable" draggable="true" title="Drag this button to your Bookmarks Bar (Ctrl+Shift+B)">
+                ⚡ Auto-Cart Bot
+            </a>
+            <button type="button" class="btn-copy-code" onclick="copyBookmarkletCode()" title="Copy JavaScript code">
+                📋 Copy Code
+            </button>
+            <button type="button" class="btn-info-icon" onclick="toggleBookmarkletGuide()" title="Setup instructions">
+                ❓ How to Setup (10s)
+            </button>
+        </div>
+        <div id="bookmarklet-guide" class="bookmarklet-guide" style="display: none;">
+            <ol style="margin: 6px 0 0 16px; padding: 0; font-size: 12px; color: #334155; line-height: 1.6;">
+                <li>Press <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Shift</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">B</kbd> to ensure your Chrome Bookmarks Bar is visible.</li>
+                <li>Drag the blue <b>[⚡ Auto-Cart Bot]</b> button above onto your Bookmarks Bar.</li>
+                <li>Click <b>'⚡ 1-Click Book / Lock'</b> on any campsite below.</li>
+                <li>On the opened Recreation.gov page, click <b>[⚡ Auto-Cart Bot]</b> on your bookmarks bar! It will auto-select the dates and click Add to Cart in 1 second.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Cloud Action Guide Banner (Triggered when user clicks 1-Click Book in cloud mode) -->
+    <div id="cloud-action-banner" style="display: none;" class="cloud-action-banner">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <div style="font-weight: 800; font-size: 15px; color: #065f46;">⚡ Recreation.gov Opened in New Tab!</div>
+                <div id="cloud-action-details" style="font-size: 13px; color: #047857; margin-top: 3px;">
+                    Campsite booking page is ready.
+                </div>
+                <div style="font-size: 12px; color: #1e293b; margin-top: 8px; background: white; padding: 10px 12px; border-radius: 6px; border: 1px dashed #059669; line-height: 1.4;">
+                    👉 <b>Final Step:</b> Switch to that Recreation.gov tab and click <b>[⚡ Auto-Cart Bot]</b> on your Chrome Bookmarks Bar.<br>
+                    It will automatically select the dates and lock the campsite into your cart!
+                </div>
+            </div>
+            <button type="button" onclick="document.getElementById('cloud-action-banner').style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer; color:#065f46; line-height: 1;">&times;</button>
+        </div>
+        <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="https://www.recreation.gov/cart" target="_blank" rel="noopener noreferrer" class="btn-open-cart">
+                🛒 Open Cart & Complete Checkout ↗
+            </a>
+            <button type="button" onclick="toggleBookmarkletGuide(true)" class="btn-info-icon" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
+                📌 Show Bookmarklet Setup
+            </button>
+        </div>
+    </div>
+
+    <!-- Active Cart Reservation Banner (For local Playwright bot) -->
     <div id="cart-hold-banner" style="display: none;" class="hold-success-banner">
         <div style="font-weight: 800; font-size: 15px;">🎉 Campsite Locked in Your Cart!</div>
         <div style="font-size: 12px; color: #065f46; margin-top: 2px;">
@@ -492,6 +634,50 @@
     const btnLoginSession = document.getElementById('btn-login-session');
     const cartHoldBanner = document.getElementById('cart-hold-banner');
     const holdCountdown = document.getElementById('hold-countdown');
+
+    // 1-Click Auto-Cart Bookmarklet Code
+    const BOOKMARKLET_CODE = `javascript:(async function(){function t(m,ok,err){let b=document.getElementById('ac-toast');if(!b){b=document.createElement('div');b.id='ac-toast';b.style.cssText='position:fixed;top:20px;right:20px;z-index:9999999;background:#0f172a;color:#f8fafc;padding:16px 20px;border-radius:12px;box-shadow:0 15px 35px rgba(0,0,0,0.5);font-family:system-ui,-apple-system,sans-serif;font-size:14px;border:2px solid '+(ok?'#10b981':(err?'#ef4444':'#38bdf8'))+';max-width:360px;line-height:1.5;';document.body.appendChild(b);}b.style.borderColor=ok?'#10b981':(err?'#ef4444':'#38bdf8');b.innerHTML='<div style="font-weight:bold;font-size:15px;margin-bottom:6px;color:'+(ok?'#10b981':(err?'#ef4444':'#38bdf8'))+'">'+(ok?'🎉 Success!':(err?'⚠️ Attention':'⚡ Auto-Cart Bot'))+'</div><div style="color:#e2e8f0;font-size:13px;">'+m+'</div>';}if(!location.hostname.includes('recreation.gov')){alert('⚡ Auto-Cart Bot: Please click this on a Recreation.gov campsite page!');return;}t('Starting Auto-Cart Bot... Detecting target dates.');let s=null,e=null;let hm=location.hash.match(/autocart=([\\d-]+),([\\d-]+)/);if(hm){s=hm[1];e=hm[2];}else{let p=new URLSearchParams(location.search);s=p.get('date')||p.get('start_date');e=p.get('end_date');if(s&&!e){let d=new Date(s+'T00:00:00');d.setDate(d.getDate()+1);e=d.toISOString().split('T')[0];}}if(!s||!e){let inp=prompt('⚡ Auto-Cart: Enter Check-in, Check-out dates (YYYY-MM-DD, YYYY-MM-DD):','2026-09-17, 2026-09-18');if(!inp)return;let parts=inp.split(',').map(x=>x.trim());s=parts[0];e=parts[1]||parts[0];}let sD=new Date(s+'T00:00:00'),eD=new Date(e+'T00:00:00');let ms=['January','February','March','April','May','June','July','August','September','October','November','December'];let tMY=ms[sD.getMonth()]+' '+sD.getFullYear();let sAria=ms[sD.getMonth()]+' '+sD.getDate()+', '+sD.getFullYear();let eAria=ms[eD.getMonth()]+' '+eD.getDate()+', '+eD.getFullYear();t('Target: <b>'+s+'</b> to <b>'+e+'</b>.<br>Revealing availability calendar...');let enterBtn=document.querySelector('#add-cart-campsite, button.campsite-page-book-now-button-tracker');if(enterBtn&&enterBtn.innerText.toLowerCase().includes('enter dates')){enterBtn.click();}let cal=document.getElementById('site-availability');if(cal)cal.scrollIntoView({behavior:'smooth',block:'center'});await new Promise(r=>setTimeout(r,1200));t('Navigating calendar to <b>'+tMY+'</b>...');for(let i=0;i<15;i++){let c=document.getElementById('site-availability');let txt=c?c.innerText:document.body.innerText;if(txt.includes(tMY))break;let nxt=document.querySelector('#site-availability button[aria-label*=\"Next\" i], #site-availability button[aria-label*=\"next\" i]')||Array.from(document.querySelectorAll('#site-availability button')).find(b=>b.querySelector('svg'));if(nxt){nxt.click();await new Promise(r=>setTimeout(r,700));}else break;}await new Promise(r=>setTimeout(r,800));function findC(str){let all=document.querySelectorAll('div.calendar-cell, [role=\"gridcell\"]');for(let c of all){if((c.getAttribute('aria-label')||'').includes(str))return c;}return null;}t('Selecting Check-in: <b>'+sAria+'</b>...');let sCell=findC(sAria);if(!sCell){t('Could not find cell for <b>'+sAria+'</b>. Please scroll to month and retry.',false,true);return;}if(sCell.getAttribute('aria-disabled')==='true'||sCell.className.includes('unavailable')){t('Check-in date <b>'+sAria+'</b> is unavailable.',false,true);return;}sCell.scrollIntoView({behavior:'smooth',block:'nearest'});sCell.click();await new Promise(r=>setTimeout(r,900));t('Selecting Check-out: <b>'+eAria+'</b>...');let eCell=findC(eAria);if(!eCell){t('Could not find cell for <b>'+eAria+'</b>.',false,true);return;}eCell.scrollIntoView({behavior:'smooth',block:'nearest'});eCell.click();await new Promise(r=>setTimeout(r,1200));t('Clicking <b>Add to Cart</b> to hold campsite...');let addBtn=document.querySelector('#add-cart-campsite, button.campsite-page-book-now-button-tracker');if(addBtn){addBtn.scrollIntoView({behavior:'smooth',block:'nearest'});addBtn.click();await new Promise(r=>setTimeout(r,2500));let err=document.querySelector('div[role=\"dialog\"]');if(err&&err.offsetParent!==null&&err.innerText.toLowerCase().includes('error')){t('Recreation.gov restriction: '+err.innerText.replace(/\\n/g,' '),false,true);return;}let proceed=Array.from(document.querySelectorAll('button, a')).find(el=>el.innerText&&el.innerText.toLowerCase().includes('proceed to cart'));if(proceed)proceed.click();t('🎉 <b>Campsite Added to Cart & Locked for 15 Min!</b><br><a href=\"https://www.recreation.gov/cart\" target=\"_blank\" style=\"display:inline-block;margin-top:10px;padding:8px 14px;background:#10b981;color:white;border-radius:6px;text-decoration:none;font-weight:bold;\">🛒 Open Cart & Checkout ↗</a>',true);}else{t('Add to Cart button not found. Please review dates.',false,true);}})();`;
+
+    // Initialize bookmarklet link href
+    const bmkLink = document.getElementById('bookmarklet-link');
+    if (bmkLink) {
+        bmkLink.href = BOOKMARKLET_CODE;
+    }
+
+    function copyBookmarkletCode() {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(BOOKMARKLET_CODE).then(() => {
+                alert("✅ Auto-Cart Bookmarklet code copied to clipboard!\n\nYou can paste it into Chrome Bookmarks URL or run it in DevTools Console on Recreation.gov.");
+            }).catch(() => {
+                prompt("Copy this code:", BOOKMARKLET_CODE);
+            });
+        } else {
+            prompt("Copy this code:", BOOKMARKLET_CODE);
+        }
+    }
+
+    function toggleBookmarkletGuide(forceOpen = false) {
+        const guide = document.getElementById('bookmarklet-guide');
+        if (!guide) return;
+        if (forceOpen) {
+            guide.style.display = 'block';
+            guide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            guide.style.display = (guide.style.display === 'none' || !guide.style.display) ? 'block' : 'none';
+        }
+    }
+
+    function showCloudActionBanner(campsiteName, startDate, endDate) {
+        const banner = document.getElementById('cloud-action-banner');
+        const details = document.getElementById('cloud-action-details');
+        if (details) {
+            details.innerHTML = `Holding campsite: <b>${escapeHtml(campsiteName)}</b> (<b>${startDate}</b> to <b>${endDate}</b>)`;
+        }
+        if (banner) {
+            banner.style.display = 'block';
+            banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
 
     // Restrict dates to today or future
     const today = new Date();
@@ -658,21 +844,21 @@
             }
         }
 
-        const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}`;
+        const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}#autocart=${encodeURIComponent(targetStartDate)},${encodeURIComponent(targetEndDate)}`;
         const btn = document.getElementById(`btn-hold-${campsiteId}`);
 
         // Cloud Mode (Render Deployment):
         // Synchronous window.open is 100% immune to browser popup blockers!
         if (isCloudMode) {
             const bookingWindow = window.open(directBookingUrl, '_blank');
-            startCartCountdown(900);
+            showCloudActionBanner(campsiteName, targetStartDate, targetEndDate);
             if (btn) {
-                btn.innerHTML = '✓ Booking Opened!';
+                btn.innerHTML = '✓ Tab Opened! (Click Bookmarklet)';
                 btn.style.background = '#059669';
                 setTimeout(() => {
                     btn.innerHTML = '⚡ 1-Click Book / Lock';
                     btn.style.background = '';
-                }, 4000);
+                }, 5000);
             }
             if (!bookingWindow || bookingWindow.closed || typeof bookingWindow.closed === 'undefined') {
                 // Fallback for extremely strict environments
