@@ -499,15 +499,31 @@
     startDateInput.min = todayStr;
     endDateInput.min = todayStr;
 
-    // Synchronize check-out date minimum with selected check-in date
-    startDateInput.addEventListener('change', function () {
-        if (this.value) {
-            endDateInput.min = this.value;
-            if (endDateInput.value && endDateInput.value < this.value) {
-                endDateInput.value = this.value;
+    // Synchronize check-out date and automatically refresh active campground results
+    function handleDateChange() {
+        if (startDateInput.value) {
+            // Check-out must be at least 1 day after check-in for overnight stay
+            const startD = new Date(startDateInput.value);
+            const nextD = new Date(startD);
+            nextD.setDate(nextD.getDate() + 1);
+            const nextDStr = nextD.toISOString().split('T')[0];
+
+            endDateInput.min = nextDStr;
+
+            // If check-out is missing or on/before check-in date, advance it
+            if (!endDateInput.value || endDateInput.value <= startDateInput.value) {
+                endDateInput.value = nextDStr;
             }
         }
-    });
+
+        // Automatically re-fetch availability if user is actively viewing a campground's campsites
+        if (currentFacilityId && currentFacilityName && startDateInput.value && endDateInput.value) {
+            fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
+        }
+    }
+
+    startDateInput.addEventListener('change', handleDateChange);
+    endDateInput.addEventListener('change', handleDateChange);
 
     let currentPage = 1;
     let currentStateCode = stateSelect.value || '';
