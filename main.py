@@ -428,7 +428,8 @@ def serve_home(request: Request):
 IS_CLOUD_DEPLOYMENT = bool(
     os.environ.get("RENDER") or
     os.environ.get("RENDER_SERVICE_ID") or
-    os.environ.get("CLOUD_DEPLOYMENT")
+    os.environ.get("CLOUD_DEPLOYMENT") or
+    os.environ.get("PORT")
 )
 
 
