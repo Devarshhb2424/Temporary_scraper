@@ -403,7 +403,7 @@
             border-radius: 10px;
             padding: 12px 16px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .bookmarklet-header {
@@ -449,7 +449,8 @@
             cursor: grabbing;
         }
 
-        .btn-copy-code, .btn-info-icon {
+        .btn-copy-code,
+        .btn-info-icon {
             background: white;
             border: 1px solid #cbd5e1;
             color: #334155;
@@ -461,7 +462,8 @@
             transition: background 0.15s;
         }
 
-        .btn-copy-code:hover, .btn-info-icon:hover {
+        .btn-copy-code:hover,
+        .btn-info-icon:hover {
             background: #f1f5f9;
         }
 
@@ -799,9 +801,12 @@
         <div class="session-bar">
             <div class="session-status" id="session-status-text">
                 <span class="status-dot dot-green" id="session-dot"></span>
-                <span id="session-label">Direct Booking Mode <span style="font-size: 11px; color: #059669; font-weight: normal;">(Recreation.gov Active)</span></span>
+                <span id="session-label">Direct Booking Mode <span
+                        style="font-size: 11px; color: #059669; font-weight: normal;">(Recreation.gov
+                        Active)</span></span>
             </div>
-            <a href="https://www.recreation.gov/" target="_blank" rel="noopener noreferrer" class="btn-login-session" id="btn-login-session" onclick="triggerLoginSession(event)">
+            <a href="https://www.recreation.gov/" target="_blank" rel="noopener noreferrer" class="btn-login-session"
+                id="btn-login-session" onclick="triggerLoginSession(event)">
                 🔑 Log In to Rec.gov ↗
             </a>
         </div>
@@ -821,7 +826,8 @@
         <!-- 1-Click Auto-Cart Bookmarklet Bar -->
         <div class="bookmarklet-bar">
             <div class="bookmarklet-header">
-                <span style="font-weight: 700; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                <span
+                    style="font-weight: 700; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
                     ⚡ <b>1-Click Auto-Cart Bookmarklet</b>
                 </span>
                 <span style="font-size: 12px; color: #64748b;">
@@ -829,16 +835,22 @@
                 </span>
             </div>
             <div class="bookmarklet-actions">
-                <a id="bookmarklet-link" href="#" class="bookmarklet-draggable" draggable="true" onclick="handleBookmarkletClick(event)" title="Click to copy or drag to Bookmarks Bar (Ctrl+Shift+B)">
+                <a id="bookmarklet-link" href="#" class="bookmarklet-draggable" draggable="true"
+                    onclick="handleBookmarkletClick(event)"
+                    title="Click to copy or drag to Bookmarks Bar (Ctrl+Shift+B)">
                     ⚡ Auto-Cart Bot
                 </a>
-                <button type="button" class="btn-copy-code" id="btn-copy-bmk" onclick="copyBookmarkletCode(false)" title="Copy JavaScript code">
+                <button type="button" class="btn-copy-code" id="btn-copy-bmk" onclick="copyBookmarkletCode(false)"
+                    title="Copy JavaScript code">
                     📋 Copy Code
                 </button>
-                <button type="button" class="btn-copy-code" id="btn-download-bmk" onclick="downloadBookmarkHtml()" style="background:#f1f5f9; color:#0f172a; border-color:#cbd5e1;" title="Download Bookmark HTML file to import into Chrome in 1 click">
+                <button type="button" class="btn-copy-code" id="btn-download-bmk" onclick="downloadBookmarkHtml()"
+                    style="background:#f1f5f9; color:#0f172a; border-color:#cbd5e1;"
+                    title="Download Bookmark HTML file to import into Chrome in 1 click">
                     📥 Download Bookmark File
                 </button>
-                <button type="button" class="btn-info-icon" onclick="toggleBookmarkletGuide()" title="Setup instructions">
+                <button type="button" class="btn-info-icon" onclick="toggleBookmarkletGuide()"
+                    title="Setup instructions">
                     ❓ How to Setup (10s)
                 </button>
             </div>
@@ -846,24 +858,48 @@
                 <div style="font-weight: 700; color: #0f172a; margin-bottom: 6px; font-size: 13px;">
                     🚀 How to Add & Use the ⚡ Auto-Cart Bot:
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 12px; color: #334155; line-height: 1.5;">
-                    <div style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <div
+                    style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 12px; color: #334155; line-height: 1.5;">
+                    <div
+                        style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
                         <b>Method 1: Right-Click Chrome Bookmarks Bar (Fastest - 5 Seconds)</b>
                         <ol style="margin: 4px 0 0 16px; padding: 0;">
-                            <li>Click the blue <b>[⚡ Auto-Cart Bot]</b> or <b>[📋 Copy Code]</b> button above (the code is copied!).</li>
-                            <li>Right-click anywhere on your Chrome Bookmarks Bar (press <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Shift</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">B</kbd> if bar is hidden) and click <b>"Add page..."</b> or <b>"Add bookmark..."</b>.</li>
-                            <li>Set Name: <code>⚡ Auto-Cart Bot</code> and in the <b>URL</b> field, press <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">V</kbd> to paste. Click <b>Save</b>.</li>
+                            <li>Click the blue <b>[⚡ Auto-Cart Bot]</b> or <b>[📋 Copy Code]</b> button above (the code
+                                is copied!).</li>
+                            <li>Right-click anywhere on your Chrome Bookmarks Bar (press <kbd
+                                    style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd>
+                                + <kbd
+                                    style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Shift</kbd>
+                                + <kbd
+                                    style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">B</kbd>
+                                if bar is hidden) and click <b>"Add page..."</b> or <b>"Add bookmark..."</b>.</li>
+                            <li>Set Name: <code>⚡ Auto-Cart Bot</code> and in the <b>URL</b> field, press <kbd
+                                    style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd>
+                                + <kbd
+                                    style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">V</kbd>
+                                to paste. Click <b>Save</b>.</li>
                         </ol>
                     </div>
-                    <div style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <div
+                        style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
                         <b>Method 2: DevTools Console (Instant - Zero Setup)</b>
                         <div style="margin-top: 4px;">
-                            On any Recreation.gov campsite page: Press <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">F12</kbd> (or right-click &rarr; Inspect), click <b>Console</b> tab, press <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd> + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">V</kbd>, and hit <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Enter</kbd>! It will auto-select dates and add to cart immediately.
+                            On any Recreation.gov campsite page: Press <kbd
+                                style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">F12</kbd>
+                            (or right-click &rarr; Inspect), click <b>Console</b> tab, press <kbd
+                                style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Ctrl</kbd>
+                            + <kbd style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">V</kbd>,
+                            and hit <kbd
+                                style="background:#e2e8f0;padding:2px 5px;border-radius:4px;font-size:11px;">Enter</kbd>!
+                            It will auto-select dates and add to cart immediately.
                         </div>
                     </div>
-                    <div style="background: #ecfdf5; padding: 10px 12px; border-radius: 6px; border: 1px solid #a7f3d0; color: #065f46;">
+                    <div
+                        style="background: #ecfdf5; padding: 10px 12px; border-radius: 6px; border: 1px solid #a7f3d0; color: #065f46;">
                         <b>🎯 How to Use When Booking:</b>
-                        When you click <b>'⚡ 1-Click Book / Lock'</b> on any campsite below, Recreation.gov opens in a new tab. Simply click <b>[⚡ Auto-Cart Bot]</b> on your bookmarks bar (or run in Console) &mdash; it locks the site into your cart and starts the 15-minute countdown!
+                        When you click <b>'⚡ 1-Click Book / Lock'</b> on any campsite below, Recreation.gov opens in a
+                        new tab. Simply click <b>[⚡ Auto-Cart Bot]</b> on your bookmarks bar (or run in Console) &mdash;
+                        it locks the site into your cart and starts the 15-minute countdown!
                     </div>
                 </div>
             </div>
@@ -873,22 +909,28 @@
         <div id="cloud-action-banner" style="display: none;" class="cloud-action-banner">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <div style="font-weight: 800; font-size: 15px; color: #065f46;">⚡ Recreation.gov Opened in New Tab!</div>
+                    <div style="font-weight: 800; font-size: 15px; color: #065f46;">⚡ Recreation.gov Opened in New Tab!
+                    </div>
                     <div id="cloud-action-details" style="font-size: 13px; color: #047857; margin-top: 3px;">
                         Campsite booking page is ready.
                     </div>
-                    <div style="font-size: 12px; color: #1e293b; margin-top: 8px; background: white; padding: 10px 12px; border-radius: 6px; border: 1px dashed #059669; line-height: 1.4;">
-                        👉 <b>Final Step:</b> Switch to that Recreation.gov tab and click <b>[⚡ Auto-Cart Bot]</b> on your Chrome Bookmarks Bar.<br>
+                    <div
+                        style="font-size: 12px; color: #1e293b; margin-top: 8px; background: white; padding: 10px 12px; border-radius: 6px; border: 1px dashed #059669; line-height: 1.4;">
+                        👉 <b>Final Step:</b> Switch to that Recreation.gov tab and click <b>[⚡ Auto-Cart Bot]</b> on
+                        your Chrome Bookmarks Bar.<br>
                         It will automatically select the dates and lock the campsite into your cart!
                     </div>
                 </div>
-                <button type="button" onclick="document.getElementById('cloud-action-banner').style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer; color:#065f46; line-height: 1;">&times;</button>
+                <button type="button" onclick="document.getElementById('cloud-action-banner').style.display='none'"
+                    style="background:none; border:none; font-size:20px; cursor:pointer; color:#065f46; line-height: 1;">&times;</button>
             </div>
             <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <a href="https://www.recreation.gov/cart" target="_blank" rel="noopener noreferrer" class="btn-open-cart">
+                <a href="https://www.recreation.gov/cart" target="_blank" rel="noopener noreferrer"
+                    class="btn-open-cart">
                     🛒 Open Cart & Complete Checkout ↗
                 </a>
-                <button type="button" onclick="toggleBookmarkletGuide(true)" class="btn-info-icon" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
+                <button type="button" onclick="toggleBookmarkletGuide(true)" class="btn-info-icon"
+                    style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
                     📌 Show Bookmarklet Setup
                 </button>
             </div>
@@ -1133,7 +1175,7 @@
 
             // In local development, also ping background session setup if running locally
             if (!isCloudMode) {
-                fetch('/api/session/login', { method: 'POST' }).catch(() => {});
+                fetch('/api/session/login', { method: 'POST' }).catch(() => { });
             }
         }
 
@@ -1444,7 +1486,7 @@
     })();`;
 
         // Wrapped in void(...) so browser bookmarklet never replaces page with [object Promise]
-        const BOOKMARKLET_CODE = `javascript:void(${RAW_AUTOCART_CODE});`;
+        const BOOKMARKLET_CODE = `javascript:${RAW_AUTOCART_CODE}`;
 
         // Initialize bookmarklet link href
         const bmkLink = document.getElementById('bookmarklet-link');
