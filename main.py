@@ -238,10 +238,21 @@ def add_to_cart_and_hold(
         s_dt = datetime.strptime(start_date, "%Y-%m-%d")
         e_dt = datetime.strptime(end_date, "%Y-%m-%d")
 
-        # Format matches Recreation.gov aria-labels, e.g. "September 18, 2026"
+        # Format matches Recreation.gov aria-labels across US and International/Indian locales:
+        # e.g. "September 21, 2026" or "21 September 2026"
         start_month_year = s_dt.strftime("%B %Y")
-        start_match_str = f"{s_dt.strftime('%B')} {s_dt.day}, {s_dt.year}"
-        end_match_str = f"{e_dt.strftime('%B')} {e_dt.day}, {e_dt.year}"
+        start_loc_str = (
+            f"div.calendar-cell[aria-label*='{s_dt.strftime('%B')} {s_dt.day}, {s_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{s_dt.day} {s_dt.strftime('%B')} {s_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{s_dt.strftime('%b')} {s_dt.day}, {s_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{s_dt.day} {s_dt.strftime('%b')} {s_dt.year}']"
+        )
+        end_loc_str = (
+            f"div.calendar-cell[aria-label*='{e_dt.strftime('%B')} {e_dt.day}, {e_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{e_dt.day} {e_dt.strftime('%B')} {e_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{e_dt.strftime('%b')} {e_dt.day}, {e_dt.year}'], "
+            f"div.calendar-cell[aria-label*='{e_dt.day} {e_dt.strftime('%b')} {e_dt.year}']"
+        )
 
         with sync_playwright() as p:
             context = p.chromium.launch_persistent_context(
@@ -287,11 +298,11 @@ def add_to_cart_and_hold(
                 # Ensure requested month is visible in the calendar
                 print(f"[*] Navigating calendar to month: {start_month_year}...")
                 for _ in range(12):
-                    cal_loc = page.locator("#site-availability")
+                    cal_loc = page.locator("section:has(#site-availability), body").first
                     cal_text = cal_loc.inner_text() if cal_loc.count() > 0 else ""
                     if start_month_year in cal_text:
                         break
-                    next_btn = page.locator("button[aria-label*='Next'], button[aria-label*='next'], #site-availability button:has(svg)")
+                    next_btn = page.locator("button.next-prev-button[aria-label*='Next' i], button[aria-label='Next'], button[aria-label*='next' i]")
                     if next_btn.count() > 0:
                         next_btn.first.click()
                         page.wait_for_timeout(700)
@@ -299,14 +310,14 @@ def add_to_cart_and_hold(
                         break
 
                 # 1. Click Start Date cell
-                print(f"[*] Selecting start date cell: '{start_match_str}'...")
-                start_cell = page.locator(f"div.calendar-cell[aria-label*='{start_match_str}']").first
+                print(f"[*] Selecting start date cell: '{start_date}'...")
+                start_cell = page.locator(start_loc_str).first
                 if start_cell.count() > 0:
                     # Check if cell is disabled or unavailable
                     classes = start_cell.get_attribute("class") or ""
                     aria_disabled = start_cell.get_attribute("aria-disabled") == "true"
                     if aria_disabled or "is-unavailable" in classes or "firstComeFirstServed" in classes:
-                        print(f"[-] Check-in date '{start_match_str}' is unavailable or First-Come First-Served for this campsite.")
+                        print(f"[-] Check-in date '{start_date}' is unavailable or First-Come First-Served for this campsite.")
                         return False, f"Check-in date ({start_date}) is not reservable for this site (it is First-Come/Unavailable). Please choose an available date."
 
                     start_cell.scroll_into_view_if_needed()
@@ -314,12 +325,12 @@ def add_to_cart_and_hold(
                     page.wait_for_timeout(1000)
                     print("[OK] Start date clicked.")
                 else:
-                    print(f"[!] Start date cell '{start_match_str}' not found in calendar.")
-                    return False, f"Start date cell '{start_match_str}' not found in calendar."
+                    print(f"[!] Start date cell '{start_date}' not found in calendar.")
+                    return False, f"Start date cell '{start_date}' not found in calendar."
 
                 # 2. Click End Date cell
-                print(f"[*] Selecting end date cell: '{end_match_str}'...")
-                end_cell = page.locator(f"div.calendar-cell[aria-label*='{end_match_str}']").first
+                print(f"[*] Selecting end date cell: '{end_date}'...")
+                end_cell = page.locator(end_loc_str).first
                 if end_cell.count() > 0:
                     classes = end_cell.get_attribute("class") or ""
                     aria_disabled = end_cell.get_attribute("aria-disabled") == "true"
@@ -614,13 +625,13 @@ def trigger_auto_hold(req: HoldRequest):
     Trigger Auto Add-to-Cart bot to hold a campsite in the user's cart for 15 minutes.
     On Render cloud deployment, returns direct 1-click booking link to user's browser.
     """
-    direct_url = f"https://www.recreation.gov/camping/campsites/{req.campsite_id}?date={req.start_date}"
+    direct_url = f"https://www.recreation.gov/camping/campsites/{req.campsite_id}?date={req.start_date}#autocart={req.start_date},{req.end_date}"
 
     if IS_CLOUD_DEPLOYMENT:
         return {
             "success": True,
             "is_cloud_direct": True,
-            "message": "Cloud Mode: Opening campsite booking page in your browser where you are logged in!",
+            "message": "Cloud Mode: Opening campsite booking page. Click the Auto-Cart Bookmarklet to hold!",
             "booking_url": direct_url,
             "cart_url": "https://www.recreation.gov/cart",
             "timer_minutes": 15

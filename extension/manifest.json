@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Campsite Finder Auto-Cart Assistant",
+  "version": "1.0.0",
+  "description": "Automatically selects dates and locks campsites into your Recreation.gov cart in 1 click.",
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.recreation.gov/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.recreation.gov/camping/campsites/*",
+        "*://*.recreation.gov/camping/campgrounds/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
