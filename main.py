@@ -476,7 +476,8 @@ def launch_login_browser():
 def get_facilities(
     state: str = Query(..., description="State code (e.g. MD) or full name"),
     offset: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100)
+    limit: int = Query(20, ge=1, le=100),
+    vehicle_length: Optional[int] = Query(None, ge=0, description="RV/Trailer length in feet")
 ):
     """
     Fetch campgrounds for a given state using Recreation.gov's internal Search API.
@@ -487,7 +488,8 @@ def get_facilities(
         df = search_scraper.scrape_campgrounds(
             query=state_query,
             radius=165,
-            page_size=limit
+            page_size=limit,
+            vehicle_length=vehicle_length
         )
 
         facilities = []
@@ -523,7 +525,8 @@ def get_campsite_availability(
     start_date: str = Query(..., description="Start date in YYYY-MM-DD format"),
     end_date: str = Query(..., description="End date in YYYY-MM-DD format"),
     campsite_type: Optional[str] = Query(None, description="Optional type filter (e.g. RV, ELECTRIC)"),
-    only_continuous: bool = Query(False, description="Only show continuous available stays")
+    only_continuous: bool = Query(False, description="Only show continuous available stays"),
+    rv_length: Optional[int] = Query(None, ge=0, description="RV/Trailer length in feet")
 ):
     """
     Check Date Range Availability for all campsites in a specific campground.
@@ -534,19 +537,38 @@ def get_campsite_availability(
             start_date_str=start_date,
             end_date_str=end_date,
             site_type_filter=campsite_type,
-            only_continuous=only_continuous
+            only_continuous=only_continuous,
+            min_rv_length=rv_length
         )
 
         df_summary = results["summary"]
         campsites = []
 
+        import pandas as pd
         for _, row in df_summary.iterrows():
+            max_rv = 0
+            if "max_rv_length" in row and not pd.isna(row["max_rv_length"]):
+                try:
+                    max_rv = int(row["max_rv_length"])
+                except Exception:
+                    max_rv = 0
+
+            max_veh = 0
+            if "max_vehicle_length" in row and not pd.isna(row["max_vehicle_length"]):
+                try:
+                    max_veh = int(row["max_vehicle_length"])
+                except Exception:
+                    max_veh = 0
+
             campsites.append({
                 "CampsiteID": str(row["site_id"]),
                 "CampsiteName": f"Site {row['site_number']}",
                 "site_number": row["site_number"],
                 "Loop": row["loop"],
                 "CampsiteType": row["campsite_type"],
+                "max_rv_length": max_rv,
+                "max_vehicle_length": max_veh,
+                "permitted_equipment": str(row.get("permitted_equipment", "") if not pd.isna(row.get("permitted_equipment")) else ""),
                 "available_days_count": int(row["available_days_count"]),
                 "total_requested_days": int(row["total_requested_days"]),
                 "is_continuous_stay": bool(row["is_continuous_stay"]),
@@ -563,6 +585,24 @@ def get_campsite_availability(
             "end_date": end_date,
             "total_available_campsites": len(campsites),
             "campsites": campsites
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/location/facilities/{facility_id}/campsites/{campsite_id}/details")
+def get_campsite_details(facility_id: str, campsite_id: str):
+    """
+    Fetch comprehensive campsite details, notices, equipment specs, and campground alerts.
+    """
+    try:
+        details = availability_scraper.get_campsite_full_details(
+            facility_id=facility_id,
+            campsite_id=campsite_id
+        )
+        return {
+            "status": 200,
+            "data": details
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

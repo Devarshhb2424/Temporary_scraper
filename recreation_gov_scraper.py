@@ -76,6 +76,7 @@ class RecreationGovScraper:
         query: str = "Maryland",
         radius: int = 165,
         campsite_type: str = "rv/ motorhome/ trailer",
+        vehicle_length: Optional[int] = None,
         sort: str = "available",
         page_size: int = 50,
     ) -> pd.DataFrame:
@@ -86,6 +87,7 @@ class RecreationGovScraper:
             query: Search query (state, park name, or city)
             radius: Radius in miles
             campsite_type: Filter for site type (e.g. 'rv/ motorhome/ trailer')
+            vehicle_length: Optional vehicle/RV length in feet (e.g. 30)
             sort: Sort order ('available', 'best_match', etc.)
             page_size: Items per page request (default 50)
             
@@ -97,12 +99,14 @@ class RecreationGovScraper:
         total_items = None
 
         print(f"\n[+] Scraping Recreation.gov for: '{query}'")
-        print(f"[+] Filters: Campsite Type='{campsite_type}', Radius={radius}mi, Sort='{sort}'")
+        print(f"[+] Filters: Campsite Type='{campsite_type}', Vehicle Length={vehicle_length}, Radius={radius}mi, Sort='{sort}'")
 
         # Map filter categories to Recreation.gov API params
         fg_filters = ["camping"]
         if "rv" in campsite_type.lower():
             fg_filters.append("rmt")  # rmt = RV / Motorhome / Trailer
+        if vehicle_length is not None and vehicle_length > 0:
+            fg_filters.append(f"vehicle-length:{vehicle_length}")
 
         while True:
             params = {

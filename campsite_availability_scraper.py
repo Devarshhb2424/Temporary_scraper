@@ -40,6 +40,8 @@ class CampsiteAvailabilityScraper:
             follow_redirects=True
         )
         self._image_cache: Dict[str, Optional[str]] = {}
+        self._facility_campsites_cache: Dict[str, Dict[str, Any]] = {}
+        self._campground_details_cache: Dict[str, Dict[str, Any]] = {}
 
     def get_campground_image(self, facility_id: str) -> Optional[str]:
         """Fetch campground hero image."""
@@ -101,6 +103,244 @@ class CampsiteAvailabilityScraper:
             pass
         return f"Campground #{facility_id}"
 
+    def get_facility_campsites_metadata(self, facility_id: str) -> Dict[str, Dict[str, Any]]:
+        """
+        Fetch all campsite equipment, dimensions, and vehicle rules for a facility.
+        Returns a dict mapping campsite_id to its parsed metadata.
+        """
+        if facility_id in self._facility_campsites_cache:
+            return self._facility_campsites_cache[facility_id]
+
+        meta_by_id: Dict[str, Dict[str, Any]] = {}
+        try:
+            url = f"https://www.recreation.gov/api/camps/campgrounds/{facility_id}/campsites"
+            resp = self.client.get(url, params={"start": 0, "size": 1000}, timeout=10.0)
+            if resp.status_code == 200:
+                raw_campsites = resp.json().get("campsites", [])
+                rv_types = {"rv", "trailer", "fifth wheel", "popup", "pop up", "motorhome", "truck camper", "caravan"}
+                
+                for c in raw_campsites:
+                    sid = str(c.get("campsite_id"))
+                    permitted = c.get("permitted_equipment", []) or []
+                    
+                    rv_lengths = []
+                    for eq in permitted:
+                        eq_name = (eq.get("equipment_name") or "").strip()
+                        if any(t in eq_name.lower() for t in rv_types) and not eq.get("is_deactivated", False):
+                            ml = eq.get("max_length")
+                            if ml is not None:
+                                rv_lengths.append(int(ml))
+
+                    max_rv = max(rv_lengths, default=0)
+                    
+                    # Vehicle length attribute / map
+                    mvl_val = None
+                    eq_map = c.get("equipment_details_map") or {}
+                    if "max_vehicle_length" in eq_map:
+                        mvl_val = eq_map["max_vehicle_length"].get("attribute_value")
+                    if not mvl_val:
+                        for attr in c.get("attributes", []):
+                            if attr.get("attribute_code") == "max_vehicle_length":
+                                mvl_val = attr.get("attribute_value")
+                                break
+                    try:
+                        max_veh = int(mvl_val) if mvl_val else 0
+                    except (ValueError, TypeError):
+                        max_veh = 0
+
+                    formatted_eq = []
+                    for eq in permitted:
+                        if not eq.get("is_deactivated", False) and eq.get("equipment_name"):
+                            name = eq.get("equipment_name")
+                            length = eq.get("max_length")
+                            if length:
+                                formatted_eq.append(f"{name} ({length}ft)")
+                            else:
+                                formatted_eq.append(name)
+
+                    meta_by_id[sid] = {
+                        "max_rv_length": max_rv,
+                        "max_vehicle_length": max_veh,
+                        "permitted_equipment": formatted_eq,
+                        "has_rv_equipment": len(rv_lengths) > 0,
+                    }
+        except Exception as e:
+            print(f"[-] Failed to fetch campsite metadata for facility {facility_id}: {e}")
+
+        self._facility_campsites_cache[facility_id] = meta_by_id
+        return meta_by_id
+
+    def get_campground_full_info(self, facility_id: str) -> Dict[str, Any]:
+        """
+        Fetch campground-level alerts, notices, rules, and booking releases with caching.
+        """
+        if facility_id in self._campground_details_cache:
+            return self._campground_details_cache[facility_id]
+
+        data = {
+            "facility_id": facility_id,
+            "facility_name": f"Campground #{facility_id}",
+            "alerts": [],
+            "notices": [],
+            "booking_window": "",
+            "description": "",
+        }
+
+        # 1. External alerts (e.g. construction warnings, urgent notices)
+        try:
+            resp_alert = self.client.get(
+                f"https://www.recreation.gov/api/communication/external/alert?location_id={facility_id}&location_type=Campground",
+                timeout=6.0
+            )
+            if resp_alert.status_code == 200:
+                for a in resp_alert.json().get("alerts", []):
+                    body = a.get("body") or ""
+                    if body:
+                        data["alerts"].append({
+                            "level": a.get("alert_level", "WARNING"),
+                            "title": a.get("title") or "Campground Alert / Notice",
+                            "body": body
+                        })
+        except Exception:
+            pass
+
+        # 2. Campground general info & notices
+        try:
+            resp_cg = self.client.get(
+                self.CAMPGROUND_INFO_URL.format(facility_id=facility_id),
+                timeout=6.0
+            )
+            if resp_cg.status_code == 200:
+                cg = resp_cg.json().get("campground", {})
+                data["facility_name"] = cg.get("facility_name") or data["facility_name"]
+                data["description"] = cg.get("facility_description") or ""
+                for n in cg.get("notices", []):
+                    if n.get("notice_text") and not n.get("hide_on_permit", False):
+                        data["notices"].append({
+                            "type": n.get("notice_type", "info"),
+                            "text": n.get("notice_text", "")
+                        })
+        except Exception:
+            pass
+
+        # 3. Booking releases (booking windows)
+        try:
+            resp_rel = self.client.get(
+                f"https://www.recreation.gov/api/camps/campgrounds/{facility_id}/releases",
+                timeout=5.0
+            )
+            if resp_rel.status_code == 200:
+                cur = resp_rel.json().get("current_release", {})
+                end_str = cur.get("end")
+                if end_str:
+                    try:
+                        from datetime import datetime
+                        dt = datetime.strptime(end_str.split("T")[0], "%Y-%m-%d")
+                        data["booking_window"] = f"Reservable through {dt.strftime('%B %d, %Y')}"
+                    except Exception:
+                        data["booking_window"] = f"Reservable through {end_str}"
+        except Exception:
+            pass
+
+        self._campground_details_cache[facility_id] = data
+        return data
+
+    def get_campsite_full_details(self, facility_id: str, campsite_id: str) -> Dict[str, Any]:
+        """
+        Fetch full details, warnings, permitted equipment, driveway specs, and notices
+        for a specific campsite and its parent campground.
+        """
+        cg_data = self.get_campground_full_info(facility_id)
+
+        site_data = {
+            "campsite_id": campsite_id,
+            "facility_id": facility_id,
+            "campground_name": cg_data.get("facility_name"),
+            "campsite_name": f"Site #{campsite_id}",
+            "campsite_type": "Standard",
+            "loop": "General",
+            "image_url": self.get_campground_image(facility_id),
+            "alerts": cg_data.get("alerts", []),
+            "campground_notices": cg_data.get("notices", []),
+            "campsite_notices": [],
+            "booking_window": cg_data.get("booking_window", ""),
+            "permitted_equipment": [],
+            "max_rv_length": 0,
+            "max_vehicle_length": 0,
+            "site_details": {},
+            "equipment_details": {},
+            "amenities": []
+        }
+
+        try:
+            url = f"https://www.recreation.gov/api/camps/campsites/{campsite_id}"
+            resp = self.client.get(url, timeout=7.0)
+            if resp.status_code == 200:
+                cs = resp.json().get("campsite", {})
+                site_data["campsite_name"] = cs.get("campsite_name") or f"Site #{campsite_id}"
+                site_data["campsite_type"] = cs.get("campsite_type") or "Standard"
+                site_data["loop"] = cs.get("loop") or "General"
+
+                # Campsite notices
+                for n in cs.get("notices", []):
+                    if n.get("notice_text") and not n.get("hide_on_permit", False):
+                        site_data["campsite_notices"].append({
+                            "type": n.get("notice_type", "info"),
+                            "text": n.get("notice_text", "")
+                        })
+
+                # Permitted equipment
+                rv_types = {"rv", "trailer", "fifth wheel", "popup", "pop up", "motorhome", "truck camper", "caravan"}
+                rv_lengths = []
+                for eq in cs.get("permitted_equipment", []):
+                    if not eq.get("is_deactivated", False):
+                        name = eq.get("equipment_name", "")
+                        ml = eq.get("max_length")
+                        site_data["permitted_equipment"].append({
+                            "equipment_name": name,
+                            "max_length": ml
+                        })
+                        if any(t in name.lower() for t in rv_types) and ml is not None:
+                            rv_lengths.append(int(ml))
+                site_data["max_rv_length"] = max(rv_lengths, default=0)
+
+                # Site details & specs
+                site_map = cs.get("site_details_map", {})
+                for k, v in site_map.items():
+                    name = v.get("attribute_name") or k
+                    site_data["site_details"][name] = v.get("attribute_value")
+
+                # Equipment details & specs
+                eq_map = cs.get("equipment_details_map", {})
+                for k, v in eq_map.items():
+                    name = v.get("attribute_name") or k
+                    site_data["equipment_details"][name] = v.get("attribute_value")
+
+                mvl = eq_map.get("max_vehicle_length", {}).get("attribute_value")
+                if mvl:
+                    try:
+                        site_data["max_vehicle_length"] = int(mvl)
+                    except Exception:
+                        pass
+
+                # Amenities
+                site_data["amenities"] = [
+                    a.get("amenity_name") for a in cs.get("amenities", [])
+                    if isinstance(a, dict) and a.get("amenity_name")
+                ]
+                if not site_data["amenities"] and isinstance(cs.get("amenities"), list):
+                    site_data["amenities"] = [str(x) for x in cs.get("amenities") if isinstance(x, str)]
+
+        except Exception as e:
+            print(f"[-] Error fetching campsite {campsite_id}: {e}")
+
+        # Real photo
+        c_imgs = self.get_campsite_images([campsite_id])
+        if c_imgs.get(campsite_id):
+            site_data["image_url"] = c_imgs[campsite_id]
+
+        return site_data
+
     @staticmethod
     def _generate_month_starts(start_dt: datetime, end_dt: datetime) -> List[datetime]:
         """Generate list of 1st-of-month datetimes covering the full range."""
@@ -135,7 +375,8 @@ class CampsiteAvailabilityScraper:
         start_date_str: str,
         end_date_str: str,
         site_type_filter: Optional[str] = None,
-        only_continuous: bool = False
+        only_continuous: bool = False,
+        min_rv_length: Optional[int] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         Check availability across the specified date range.
@@ -146,6 +387,7 @@ class CampsiteAvailabilityScraper:
             end_date_str: Range end (YYYY-MM-DD)
             site_type_filter: Optional substring filter for campsite_type (e.g. 'RV', 'TENT', 'ELECTRIC')
             only_continuous: If True, only returns sites available for ALL days in range.
+            min_rv_length: Optional minimum RV / trailer length in feet.
 
         Returns:
             Dict containing:
@@ -163,6 +405,8 @@ class CampsiteAvailabilityScraper:
         print(f"[+] Date Range: {start_date_str} to {end_date_str}")
         if site_type_filter:
             print(f"[+] Site Type Filter: '{site_type_filter}'")
+        if min_rv_length:
+            print(f"[+] Min RV Length Filter: {min_rv_length} ft")
 
         # Generate list of target dates
         target_dates = []
@@ -206,6 +450,9 @@ class CampsiteAvailabilityScraper:
         # Fetch campground photo as default fallback
         campground_img = self.get_campground_image(facility_id)
 
+        # Fetch facility campsite metadata (RV lengths, allowed equipment, etc.)
+        site_meta_map = self.get_facility_campsites_metadata(facility_id)
+
         # Collect unique available site IDs to fetch their real photos
         candidate_site_ids = [
             sid for sid, info in all_campsites_data.items()
@@ -217,6 +464,19 @@ class CampsiteAvailabilityScraper:
             campsite_type = str(info.get("campsite_type") or "")
             if site_type_filter and site_type_filter.upper() not in campsite_type.upper():
                 continue
+
+            # Check RV length filter
+            meta = site_meta_map.get(str(site_id), {})
+            site_max_rv = meta.get("max_rv_length", 0)
+            site_max_veh = meta.get("max_vehicle_length", 0)
+            site_equip = meta.get("permitted_equipment", [])
+            has_rv = meta.get("has_rv_equipment", False)
+
+            if min_rv_length is not None and min_rv_length > 0:
+                # Effective RV allowance: maximum of permitted RV length or vehicle length if RV equipment permitted
+                effective_rv_capacity = site_max_rv if site_max_rv > 0 else (site_max_veh if has_rv else 0)
+                if effective_rv_capacity < min_rv_length:
+                    continue
 
             avail_map = info.get("availabilities", {})
             available_dates_for_site = []
@@ -257,6 +517,9 @@ class CampsiteAvailabilityScraper:
                     "site_number": info.get("site_number"),
                     "loop": info.get("loop"),
                     "campsite_type": campsite_type,
+                    "max_rv_length": site_max_rv,
+                    "max_vehicle_length": site_max_veh,
+                    "permitted_equipment": ", ".join(site_equip) if site_equip else "None specified",
                     "available_days_count": avail_count,
                     "total_requested_days": total_requested_days,
                     "is_continuous_stay": is_fully_available,

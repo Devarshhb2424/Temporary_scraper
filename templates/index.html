@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,8 +72,15 @@
             display: inline-block;
         }
 
-        .dot-green { background: #10b981; box-shadow: 0 0 0 2px #dcfce7; }
-        .dot-red { background: #ef4444; box-shadow: 0 0 0 2px #fee2e2; }
+        .dot-green {
+            background: #10b981;
+            box-shadow: 0 0 0 2px #dcfce7;
+        }
+
+        .dot-red {
+            background: #ef4444;
+            box-shadow: 0 0 0 2px #fee2e2;
+        }
 
         .btn-login-session {
             background: #2563eb;
@@ -98,7 +106,8 @@
             color: #334155;
         }
 
-        select, input[type="date"] {
+        select,
+        input[type="date"] {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid #cbd5e1;
@@ -110,7 +119,8 @@
             transition: border-color 0.2s;
         }
 
-        select:focus, input[type="date"]:focus {
+        select:focus,
+        input[type="date"]:focus {
             border-color: #2563eb;
             background: white;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -239,9 +249,56 @@
             font-weight: 600;
         }
 
-        .badge-success { background: #dcfce7; color: #166534; }
-        .badge-partial { background: #e0f2fe; color: #0369a1; }
-        .badge-gray { background: #f1f5f9; color: #475569; }
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-partial {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-gray {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .badge-rv {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .badge-rv-fits {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            font-weight: 700;
+        }
+
+        .rv-pill {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 3px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .rv-pill:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .rv-pill.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
 
         .dates-preview {
             font-size: 11px;
@@ -354,8 +411,14 @@
             font-weight: 500;
         }
 
-        .pager button:hover:not(:disabled) { background: #f8fafc; }
-        .pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .pager button:hover:not(:disabled) {
+            background: #f8fafc;
+        }
+
+        .pager button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
 
         .back-button {
             display: inline-flex;
@@ -373,7 +436,9 @@
             transition: background 0.15s;
         }
 
-        .back-button:hover { background: #f8fafc; }
+        .back-button:hover {
+            background: #f8fafc;
+        }
 
         .loading-state {
             display: flex;
@@ -396,12 +461,21 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .empty-alert {
@@ -413,408 +487,711 @@
             font-size: 13px;
             margin-top: 10px;
         }
+
+        /* Modal Backdrop & Dialog */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-dialog {
+            background: white;
+            border-radius: 16px;
+            width: 620px;
+            max-width: 100%;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.96) translateY(10px);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-backdrop.open .modal-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            gap: 12px;
+        }
+
+        .modal-header-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .modal-header-sub {
+            font-size: 12.5px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .btn-modal-close {
+            background: #e2e8f0;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.15s;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .btn-modal-close:hover {
+            background: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Warning & Alert Boxes */
+        .alert-urgent-box {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        .alert-urgent-box strong {
+            color: #78350f;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .notice-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            font-size: 12.5px;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .notice-card strong {
+            color: #0f172a;
+        }
+
+        .section-heading {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin: 16px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .spec-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+
+        .spec-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .spec-val {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-top: 2px;
+        }
+
+        .equipment-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #dbeafe;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .amenity-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin: 3px;
+        }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>🏕️ Campsite Finder</h1>
-    <div class="subtitle">Search Campgrounds, Live Dates & 15-Min Auto-Hold</div>
+        <h1>🏕️ Campsite Finder</h1>
+        <div class="subtitle">Search Campgrounds, Live Dates & 15-Min Auto-Hold</div>
 
-    <!-- Recreation.gov Session Bar -->
-    <div class="session-bar">
-        <div class="session-status" id="session-status-text">
-            <span class="status-dot dot-red" id="session-dot"></span>
-            <span id="session-label">Checking Recreation.gov Session...</span>
+        <!-- Recreation.gov Session Bar -->
+        <div class="session-bar">
+            <div class="session-status" id="session-status-text">
+                <span class="status-dot dot-red" id="session-dot"></span>
+                <span id="session-label">Checking Recreation.gov Session...</span>
+            </div>
+            <button type="button" class="btn-login-session" id="btn-login-session" onclick="triggerLoginSession()">
+                🔑 Log In to Rec.gov
+            </button>
         </div>
-        <button type="button" class="btn-login-session" id="btn-login-session" onclick="triggerLoginSession()">
-            🔑 Log In to Rec.gov
-        </button>
-    </div>
 
-    <!-- Active Cart Reservation Banner -->
-    <div id="cart-hold-banner" style="display: none;" class="hold-success-banner">
-        <div style="font-weight: 800; font-size: 15px;">🎉 Campsite Locked in Your Cart!</div>
-        <div style="font-size: 12px; color: #065f46; margin-top: 2px;">
-            Recreation.gov is holding this site for you:
+        <!-- Active Cart Reservation Banner -->
+        <div id="cart-hold-banner" style="display: none;" class="hold-success-banner">
+            <div style="font-weight: 800; font-size: 15px;">🎉 Campsite Locked in Your Cart!</div>
+            <div style="font-size: 12px; color: #065f46; margin-top: 2px;">
+                Recreation.gov is holding this site for you:
+            </div>
+            <div class="timer-display" id="hold-countdown">15:00</div>
+            <a href="https://www.recreation.gov/cart" target="_blank" rel="noopener noreferrer" class="btn-open-cart">
+                🛒 Open Cart & Complete Checkout ↗
+            </a>
         </div>
-        <div class="timer-display" id="hold-countdown">15:00</div>
-        <a href="https://www.recreation.gov/cart" target="_blank" rel="noopener noreferrer" class="btn-open-cart">
-            🛒 Open Cart & Complete Checkout ↗
-        </a>
-    </div>
 
-    <form id="state-form" onsubmit="return false;">
-        <label for="state">Select State</label>
-        <select name="state" id="state" required>
-            <option value="" disabled selected>-- Select a State --</option>
-            {% for state in states %}
+        <form id="state-form" onsubmit="return false;">
+            <label for="state">Select State</label>
+            <select name="state" id="state" required>
+                <option value="" disabled selected>-- Select a State --</option>
+                {% for state in states %}
                 <option value="{{ state.abbreviation }}">
                     {{ state.name }} ({{ state.abbreviation }})
                 </option>
-            {% endfor %}
-        </select>
+                {% endfor %}
+            </select>
 
-        <div class="date-grid">
-            <div>
-                <label for="start-date">Check-in Date</label>
-                <input type="date" id="start-date" required placeholder="Select check-in date">
+            <div class="date-grid">
+                <div>
+                    <label for="start-date">Check-in Date</label>
+                    <input type="date" id="start-date" required placeholder="Select check-in date">
+                </div>
+
+                <div>
+                    <label for="end-date">Check-out Date</label>
+                    <input type="date" id="end-date" required placeholder="Select check-out date">
+                </div>
             </div>
 
-            <div>
-                <label for="end-date">Check-out Date</label>
-                <input type="date" id="end-date" required placeholder="Select check-out date">
+            <div style="margin-top: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label for="rv-length" style="margin-bottom: 0;"> RV / Trailer Length (ft)</label>
+                    <span id="rv-badge-tip" style="font-size: 11.5px; color: #64748b;">Filter campsites by length</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="number" id="rv-length" min="0" max="100"
+                        placeholder="e.g. 30 (filters out smaller sites)" style="flex: 1;">
+                    <button type="button" id="rv-clear-btn" onclick="clearRvLength()"
+                        style="padding: 9px 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: #64748b; display: none;">Clear</button>
+                </div>
+                <div class="rv-quick-pills" style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">
+                    <button type="button" class="rv-pill" onclick="setRvLength(25)">25 ft</button>
+                    <button type="button" class="rv-pill" onclick="setRvLength(30)">30 ft</button>
+                    <button type="button" class="rv-pill" onclick="setRvLength(35)">35 ft</button>
+                    <button type="button" class="rv-pill" onclick="setRvLength(40)">40 ft</button>
+                    <button type="button" class="rv-pill" onclick="setRvLength(45)">45+ ft</button>
+                </div>
             </div>
+
+            <label class="checkbox-row">
+                <input type="checkbox" id="continuous-only">
+                <span>Show only sites available for entire continuous stay</span>
+            </label>
+        </form>
+
+        <div id="api-response">
+            Select a state to explore campgrounds.
         </div>
 
-        <label class="checkbox-row">
-            <input type="checkbox" id="continuous-only">
-            <span>Show only sites available for entire continuous stay</span>
-        </label>
-    </form>
-
-    <div id="api-response">
-        Select a state to explore campgrounds.
     </div>
 
-</div>
+    <script>
+        const stateSelect = document.getElementById('state');
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const continuousOnlyCheck = document.getElementById('continuous-only');
+        const responseBox = document.getElementById('api-response');
+        const sessionDot = document.getElementById('session-dot');
+        const sessionLabel = document.getElementById('session-label');
+        const btnLoginSession = document.getElementById('btn-login-session');
+        const cartHoldBanner = document.getElementById('cart-hold-banner');
+        const holdCountdown = document.getElementById('hold-countdown');
+        const rvLengthInput = document.getElementById('rv-length');
+        const rvClearBtn = document.getElementById('rv-clear-btn');
+        const rvBadgeTip = document.getElementById('rv-badge-tip');
 
-<script>
-    const stateSelect = document.getElementById('state');
-    const startDateInput = document.getElementById('start-date');
-    const endDateInput = document.getElementById('end-date');
-    const continuousOnlyCheck = document.getElementById('continuous-only');
-    const responseBox = document.getElementById('api-response');
-    const sessionDot = document.getElementById('session-dot');
-    const sessionLabel = document.getElementById('session-label');
-    const btnLoginSession = document.getElementById('btn-login-session');
-    const cartHoldBanner = document.getElementById('cart-hold-banner');
-    const holdCountdown = document.getElementById('hold-countdown');
+        function getRvLength() {
+            if (!rvLengthInput) return null;
+            const val = parseInt(rvLengthInput.value, 10);
+            return (!isNaN(val) && val > 0) ? val : null;
+        }
 
-    // Restrict dates to today or future
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    startDateInput.min = todayStr;
-    endDateInput.min = todayStr;
+        function setRvLength(len) {
+            if (!rvLengthInput) return;
+            if (rvLengthInput.value == len) {
+                clearRvLength();
+                return;
+            }
+            rvLengthInput.value = len;
+            handleRvChange();
+        }
 
-    // Synchronize check-out date and automatically refresh active campground results
-    function handleDateChange() {
-        if (startDateInput.value) {
-            // Check-out must be at least 1 day after check-in for overnight stay
-            const startD = new Date(startDateInput.value);
-            const nextD = new Date(startD);
-            nextD.setDate(nextD.getDate() + 1);
-            const nextDStr = nextD.toISOString().split('T')[0];
+        function clearRvLength() {
+            if (!rvLengthInput) return;
+            rvLengthInput.value = '';
+            handleRvChange();
+        }
 
-            endDateInput.min = nextDStr;
+        let rvDebounceTimer = null;
+        function handleRvChange() {
+            const val = getRvLength();
+            if (rvClearBtn) rvClearBtn.style.display = val ? 'inline-block' : 'none';
+            if (rvBadgeTip) {
+                rvBadgeTip.textContent = val ? `Showing sites ≥ ${val} ft` : 'Filter campsites by length';
+                rvBadgeTip.style.color = val ? '#2563eb' : '#64748b';
+                rvBadgeTip.style.fontWeight = val ? '700' : 'normal';
+            }
+            document.querySelectorAll('.rv-pill').forEach(btn => {
+                const pillLen = parseInt(btn.textContent, 10);
+                btn.classList.toggle('active', val === pillLen);
+            });
 
-            // If check-out is missing or on/before check-in date, advance it
-            if (!endDateInput.value || endDateInput.value <= startDateInput.value) {
-                endDateInput.value = nextDStr;
+            clearTimeout(rvDebounceTimer);
+            rvDebounceTimer = setTimeout(() => {
+                // If viewing campsites, re-fetch availability with the new RV filter
+                if (currentFacilityId && currentFacilityName && startDateInput.value && endDateInput.value) {
+                    fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
+                } else if (currentStateCode) {
+                    currentPage = 1;
+                    loadFacilitiesPage(1);
+                }
+            }, 300);
+        }
+
+        if (rvLengthInput) {
+            rvLengthInput.addEventListener('input', handleRvChange);
+        }
+
+        // Restrict dates to today or future
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        startDateInput.min = todayStr;
+        endDateInput.min = todayStr;
+
+        // Synchronize check-out date and automatically refresh active campground results
+        function handleDateChange() {
+            if (startDateInput.value) {
+                // Check-out must be at least 1 day after check-in for overnight stay
+                const startD = new Date(startDateInput.value);
+                const nextD = new Date(startD);
+                nextD.setDate(nextD.getDate() + 1);
+                const nextDStr = nextD.toISOString().split('T')[0];
+
+                endDateInput.min = nextDStr;
+
+                // If check-out is missing or on/before check-in date, advance it
+                if (!endDateInput.value || endDateInput.value <= startDateInput.value) {
+                    endDateInput.value = nextDStr;
+                }
+            }
+
+            // Automatically re-fetch availability if user is actively viewing a campground's campsites
+            if (currentFacilityId && currentFacilityName && startDateInput.value && endDateInput.value) {
+                fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
             }
         }
 
-        // Automatically re-fetch availability if user is actively viewing a campground's campsites
-        if (currentFacilityId && currentFacilityName && startDateInput.value && endDateInput.value) {
-            fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
+        startDateInput.addEventListener('change', handleDateChange);
+        endDateInput.addEventListener('change', handleDateChange);
+
+        let currentPage = 1;
+        let currentStateCode = stateSelect.value || '';
+        let totalPages = 1;
+        let currentCampsites = [];
+        let currentFacilityName = '';
+        let currentFacilityId = '';
+        let currentDateRange = null;
+        let countdownInterval = null;
+        let isCloudMode = false;
+
+        function escapeHtml(value = '') {
+            return String(value).replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
         }
-    }
 
-    startDateInput.addEventListener('change', handleDateChange);
-    endDateInput.addEventListener('change', handleDateChange);
-
-    let currentPage = 1;
-    let currentStateCode = stateSelect.value || '';
-    let totalPages = 1;
-    let currentCampsites = [];
-    let currentFacilityName = '';
-    let currentFacilityId = '';
-    let currentDateRange = null;
-    let countdownInterval = null;
-    let isCloudMode = false;
-
-    function escapeHtml(value = '') {
-        return String(value).replace(/[&<>"']/g, (char) => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        }[char]));
-    }
-
-    // Check Session Status on load
-    async function checkSessionStatus() {
-        try {
-            const resp = await fetch('/api/session/status');
-            const data = await resp.json();
-            if (data.is_cloud) {
-                isCloudMode = true;
-                sessionDot.className = 'status-dot dot-green';
-                sessionLabel.innerHTML = 'Direct Booking Mode <span style="font-size: 11px; color: #059669; font-weight: normal;">(Cloud Active)</span>';
-                if (btnLoginSession) {
-                    btnLoginSession.innerHTML = 'Rec.gov Account ↗';
-                    btnLoginSession.title = 'Open Recreation.gov in your browser';
+        // Check Session Status on load
+        async function checkSessionStatus() {
+            try {
+                const resp = await fetch('/api/session/status');
+                const data = await resp.json();
+                if (data.is_cloud) {
+                    isCloudMode = true;
+                    sessionDot.className = 'status-dot dot-green';
+                    sessionLabel.innerHTML = 'Direct Booking Mode <span style="font-size: 11px; color: #059669; font-weight: normal;">(Cloud Active)</span>';
+                    if (btnLoginSession) {
+                        btnLoginSession.innerHTML = 'Rec.gov Account ↗';
+                        btnLoginSession.title = 'Open Recreation.gov in your browser';
+                    }
+                } else if (data.logged_in) {
+                    isCloudMode = false;
+                    sessionDot.className = 'status-dot dot-green';
+                    sessionLabel.textContent = 'Session: Logged In ';
+                    if (btnLoginSession) {
+                        btnLoginSession.innerHTML = 'Re-link Login';
+                    }
+                } else {
+                    isCloudMode = false;
+                    sessionDot.className = 'status-dot dot-red';
+                    sessionLabel.textContent = 'Session: Not Logged In';
+                    if (btnLoginSession) {
+                        btnLoginSession.innerHTML = '🔑 Log In to Rec.gov';
+                    }
                 }
-            } else if (data.logged_in) {
-                isCloudMode = false;
-                sessionDot.className = 'status-dot dot-green';
-                sessionLabel.textContent = 'Session: Logged In ✓';
-                if (btnLoginSession) {
-                    btnLoginSession.innerHTML = 'Re-link Login';
-                }
-            } else {
-                isCloudMode = false;
+            } catch {
                 sessionDot.className = 'status-dot dot-red';
-                sessionLabel.textContent = 'Session: Not Logged In';
-                if (btnLoginSession) {
-                    btnLoginSession.innerHTML = '🔑 Log In to Rec.gov';
-                }
+                sessionLabel.textContent = 'Session: Offline';
             }
-        } catch {
-            sessionDot.className = 'status-dot dot-red';
-            sessionLabel.textContent = 'Session: Offline';
-        }
-    }
-
-    async function triggerLoginSession() {
-        if (isCloudMode) {
-            window.open('https://www.recreation.gov/', '_blank');
-            return;
         }
 
-        alert("Opening a browser window for Recreation.gov login. Please log in with your account so the Auto-Hold bot can access your session.");
-        try {
-            const resp = await fetch('/api/session/login', { method: 'POST' });
-            const data = await resp.json();
-
-            if (data.is_cloud) {
-                window.open(data.account_url || 'https://www.recreation.gov/', '_blank');
+        async function triggerLoginSession() {
+            if (isCloudMode) {
+                window.open('https://www.recreation.gov/', '_blank');
                 return;
             }
 
-            // Poll for login status change locally
-            let attempts = 0;
-            const poller = setInterval(async () => {
-                attempts++;
-                const sresp = await fetch('/api/session/status');
-                const sdata = await sresp.json();
-                if (sdata.logged_in) {
-                    sessionDot.className = 'status-dot dot-green';
-                    sessionLabel.textContent = 'Session: Logged In ✓';
-                    clearInterval(poller);
+            alert("Opening a browser window for Recreation.gov login. Please log in with your account so the Auto-Hold bot can access your session.");
+            try {
+                const resp = await fetch('/api/session/login', { method: 'POST' });
+                const data = await resp.json();
+
+                if (data.is_cloud) {
+                    window.open(data.account_url || 'https://www.recreation.gov/', '_blank');
+                    return;
                 }
-                if (attempts > 30) clearInterval(poller);
-            }, 5000);
-        } catch (e) {
-            alert("Error launching login window: " + e.message);
-        }
-    }
 
-    function startCartCountdown(seconds = 900) {
-        if (countdownInterval) clearInterval(countdownInterval);
-        let remaining = seconds;
-        cartHoldBanner.style.display = 'block';
-
-        const updateTimer = () => {
-            const m = Math.floor(remaining / 60).toString().padStart(2, '0');
-            const s = (remaining % 60).toString().padStart(2, '0');
-            holdCountdown.textContent = `${m}:${s}`;
-            if (remaining <= 0) {
-                clearInterval(countdownInterval);
-                holdCountdown.textContent = "EXPIRED";
+                // Poll for login status change locally
+                let attempts = 0;
+                const poller = setInterval(async () => {
+                    attempts++;
+                    const sresp = await fetch('/api/session/status');
+                    const sdata = await sresp.json();
+                    if (sdata.logged_in) {
+                        sessionDot.className = 'status-dot dot-green';
+                        sessionLabel.textContent = 'Session: Logged In ';
+                        clearInterval(poller);
+                    }
+                    if (attempts > 30) clearInterval(poller);
+                }, 5000);
+            } catch (e) {
+                alert("Error launching login window: " + e.message);
             }
-            remaining--;
-        };
-
-        updateTimer();
-        countdownInterval = setInterval(updateTimer, 1000);
-    }
-
-    async function handleAutoHold(facilityId, campsiteId, campsiteName, availDates = '', isContinuous = true) {
-        const dateRange = getSelectedDateRange();
-        if (!dateRange) {
-            alert("Please select dates first.");
-            return;
         }
 
-        let targetStartDate = dateRange.startDate;
-        let targetEndDate = dateRange.endDate;
+        function startCartCountdown(seconds = 900) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            let remaining = seconds;
+            cartHoldBanner.style.display = 'block';
 
-        // If site is partially available, use the site's actual available dates
-        if (!isContinuous && availDates) {
-            const rawDates = availDates.split(',').map(d => d.trim()).filter(Boolean).sort();
-            if (rawDates.length > 0) {
-                if (!rawDates.includes(targetStartDate)) {
-                    targetStartDate = rawDates[0];
+            const updateTimer = () => {
+                const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+                const s = (remaining % 60).toString().padStart(2, '0');
+                holdCountdown.textContent = `${m}:${s}`;
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    holdCountdown.textContent = "EXPIRED";
                 }
-                if (targetEndDate <= targetStartDate) {
-                    const nextD = new Date(targetStartDate);
-                    nextD.setDate(nextD.getDate() + 1);
-                    targetEndDate = nextD.toISOString().split('T')[0];
+                remaining--;
+            };
+
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        async function handleAutoHold(facilityId, campsiteId, campsiteName, availDates = '', isContinuous = true) {
+            const dateRange = getSelectedDateRange();
+            if (!dateRange) {
+                alert("Please select dates first.");
+                return;
+            }
+
+            let targetStartDate = dateRange.startDate;
+            let targetEndDate = dateRange.endDate;
+
+            // If site is partially available, use the site's actual available dates
+            if (!isContinuous && availDates) {
+                const rawDates = availDates.split(',').map(d => d.trim()).filter(Boolean).sort();
+                if (rawDates.length > 0) {
+                    if (!rawDates.includes(targetStartDate)) {
+                        targetStartDate = rawDates[0];
+                    }
+                    if (targetEndDate <= targetStartDate) {
+                        const nextD = new Date(targetStartDate);
+                        nextD.setDate(nextD.getDate() + 1);
+                        targetEndDate = nextD.toISOString().split('T')[0];
+                    }
                 }
             }
-        }
 
-        const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}`;
-        const btn = document.getElementById(`btn-hold-${campsiteId}`);
+            const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}`;
+            const btn = document.getElementById(`btn-hold-${campsiteId}`);
 
-        // Cloud Mode (Render Deployment):
-        // Synchronous window.open is 100% immune to browser popup blockers!
-        if (isCloudMode) {
-            const bookingWindow = window.open(directBookingUrl, '_blank');
-            startCartCountdown(900);
-            if (btn) {
-                btn.innerHTML = '✓ Booking Opened!';
-                btn.style.background = '#059669';
-                setTimeout(() => {
-                    btn.innerHTML = '⚡ 1-Click Book / Lock';
-                    btn.style.background = '';
-                }, 4000);
-            }
-            if (!bookingWindow || bookingWindow.closed || typeof bookingWindow.closed === 'undefined') {
-                // Fallback for extremely strict environments
-                window.location.href = directBookingUrl;
-            }
-            return;
-        }
-
-        // Local Mode: Persistent Playwright Bot
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Bot Holding in Cart...';
-        }
-
-        try {
-            const resp = await fetch('/api/campsite/hold', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    facility_id: facilityId,
-                    campsite_id: campsiteId,
-                    start_date: targetStartDate,
-                    end_date: targetEndDate
-                })
-            });
-
-            const result = await resp.json();
-
-            if (result.success) {
-                startCartCountdown(result.timer_minutes * 60);
+            // Cloud Mode (Render Deployment):
+            // Synchronous window.open is 100% immune to browser popup blockers!
+            if (isCloudMode) {
+                const bookingWindow = window.open(directBookingUrl, '_blank');
+                startCartCountdown(900);
                 if (btn) {
-                    btn.innerHTML = '✓ Held in Cart!';
+                    btn.innerHTML = ' Booking Opened!';
                     btn.style.background = '#059669';
+                    setTimeout(() => {
+                        btn.innerHTML = ' 1-Click Book / Lock';
+                        btn.style.background = '';
+                    }, 4000);
                 }
-                alert(`🎉 SUCCESS: ${campsiteName} has been added to your Recreation.gov cart! You have 15 minutes to complete payment.`);
-            } else {
+                if (!bookingWindow || bookingWindow.closed || typeof bookingWindow.closed === 'undefined') {
+                    // Fallback for extremely strict environments
+                    window.location.href = directBookingUrl;
+                }
+                return;
+            }
+
+            // Local Mode: Persistent Playwright Bot
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ Bot Holding in Cart...';
+            }
+
+            try {
+                const resp = await fetch('/api/campsite/hold', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        facility_id: facilityId,
+                        campsite_id: campsiteId,
+                        start_date: targetStartDate,
+                        end_date: targetEndDate
+                    })
+                });
+
+                const result = await resp.json();
+
+                if (result.success) {
+                    startCartCountdown(result.timer_minutes * 60);
+                    if (btn) {
+                        btn.innerHTML = ' Held in Cart!';
+                        btn.style.background = '#059669';
+                    }
+                    alert(`🎉 SUCCESS: ${campsiteName} has been added to your Recreation.gov cart! You have 15 minutes to complete payment.`);
+                } else {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = ' Auto-Hold (15m lock)';
+                    }
+                    alert(`Notice: ${result.message}\nOpening direct booking page instead.`);
+                    window.open(result.booking_url || directBookingUrl, '_blank');
+                }
+            } catch (err) {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '⚡ Auto-Hold (15m lock)';
+                    btn.innerHTML = ' Auto-Hold (15m lock)';
                 }
-                alert(`Notice: ${result.message}\nOpening direct booking page instead.`);
-                window.open(result.booking_url || directBookingUrl, '_blank');
+                alert("Booking error: " + err.message);
             }
-        } catch (err) {
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '⚡ Auto-Hold (15m lock)';
+        }
+
+        function getSelectedDateRange() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            if (!startDate || !endDate) return null;
+            if (new Date(endDate) < new Date(startDate)) {
+                throw new Error('End date must be on or after start date.');
             }
-            alert("Booking error: " + err.message);
-        }
-    }
 
-    function getSelectedDateRange() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-
-        if (!startDate || !endDate) return null;
-        if (new Date(endDate) < new Date(startDate)) {
-            throw new Error('End date must be on or after start date.');
+            return { startDate, endDate };
         }
 
-        return { startDate, endDate };
-    }
-
-    function showCampgroundMenu() {
-        if (!currentStateCode) {
-            responseBox.innerHTML = 'Select a state to explore campgrounds.';
-            return;
+        function showCampgroundMenu() {
+            if (!currentStateCode) {
+                responseBox.innerHTML = 'Select a state to explore campgrounds.';
+                return;
+            }
+            loadFacilitiesPage(currentPage);
         }
-        loadFacilitiesPage(currentPage);
-    }
 
-    function renderBackToCampgroundButton() {
-        return `
+        function renderBackToCampgroundButton() {
+            return `
             <button type="button" class="back-button" data-action="back-to-campground">
                 ← Back to Campgrounds
             </button>
         `;
-    }
+        }
 
-    function renderCampsiteList(facilityName, campsites) {
-        currentFacilityName = facilityName;
-        currentCampsites = campsites;
-        const dateSummary = currentDateRange
-            ? ` for ${currentDateRange.startDate} to ${currentDateRange.endDate}`
-            : '';
+        function renderCampsiteList(facilityName, campsites) {
+            currentFacilityName = facilityName;
+            currentCampsites = campsites;
+            const currentRvFilter = getRvLength();
+            const dateSummary = currentDateRange
+                ? ` for ${currentDateRange.startDate} to ${currentDateRange.endDate}`
+                : '';
+            const rvSummary = currentRvFilter ? ` (min ${currentRvFilter} ft)` : '';
 
-        if (!campsites || !campsites.length) {
-            responseBox.innerHTML = `
+            if (!campsites || !campsites.length) {
+                const rvNote = currentRvFilter ? `<br>No campsites can fit an RV/trailer of length <strong>${currentRvFilter} ft</strong>.` : '';
+                responseBox.innerHTML = `
                 <span class="facilities-title">Available Campsites</span>
                 <div class="empty-alert">
-                    No available campsites found${dateSummary} for <strong>${escapeHtml(facilityName)}</strong>.
-                    <br><small>Try selecting different dates or unchecking continuous stay.</small>
+                    No available campsites found${dateSummary} for <strong>${escapeHtml(facilityName)}</strong>.${rvNote}
+                    <br><small>Try decreasing the RV length filter, selecting different dates, or unchecking continuous stay.</small>
                 </div>
                 ${renderBackToCampgroundButton()}
             `;
-            responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
-            return;
-        }
-
-        const itemsHtml = campsites.map((campsite) => {
-            const name = campsite?.CampsiteName || `Site ${campsite?.site_number || 'N/A'}`;
-            const type = campsite?.CampsiteType || campsite?.campsite_type || 'Camp/RV';
-            const loop = campsite?.Loop || campsite?.loop || 'General Loop';
-            const availCount = campsite?.available_days_count ?? 0;
-            const totalDays = campsite?.total_requested_days ?? 0;
-            const isContinuous = campsite?.is_continuous_stay ?? false;
-            const availDates = campsite?.available_dates || '';
-            const imageUrl = campsite?.image_url || '';
-            const siteId = campsite?.CampsiteID;
-
-            const dateList = (availDates || '').split(',').map(d => d.trim()).filter(Boolean).sort();
-            let cardStartDate = currentDateRange ? currentDateRange.startDate : '';
-            if (!isContinuous && dateList.length > 0 && !dateList.includes(cardStartDate)) {
-                cardStartDate = dateList[0];
+                responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
+                return;
             }
-            const directBookingUrl = `https://www.recreation.gov/camping/campsites/${siteId}${cardStartDate ? '?date=' + encodeURIComponent(cardStartDate) : ''}`;
 
-            const badgeMarkup = isContinuous
-                ? `<span class="badge badge-success">✓ Entire Stay (${availCount}/${totalDays} days)</span>`
-                : `<span class="badge badge-partial">${availCount}/${totalDays} Days Available</span>`;
+            const itemsHtml = campsites.map((campsite) => {
+                const name = campsite?.CampsiteName || `Site ${campsite?.site_number || 'N/A'}`;
+                const type = campsite?.CampsiteType || campsite?.campsite_type || 'Camp/RV';
+                const loop = campsite?.Loop || campsite?.loop || 'General Loop';
+                const availCount = campsite?.available_days_count ?? 0;
+                const totalDays = campsite?.total_requested_days ?? 0;
+                const isContinuous = campsite?.is_continuous_stay ?? false;
+                const availDates = campsite?.available_dates || '';
+                const imageUrl = campsite?.image_url || '';
+                const siteId = campsite?.CampsiteID;
+                const maxRv = campsite?.max_rv_length || 0;
+                const maxVeh = campsite?.max_vehicle_length || 0;
+                const permittedEq = campsite?.permitted_equipment || '';
 
-            const imageMarkup = imageUrl
-                ? `<img class="facility-image-photo" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.outerHTML='<div class=\\'facility-image\\'>🏕️</div>'">`
-                : `<div class="facility-image">🏕️</div>`;
+                const dateList = (availDates || '').split(',').map(d => d.trim()).filter(Boolean).sort();
+                let cardStartDate = currentDateRange ? currentDateRange.startDate : '';
+                if (!isContinuous && dateList.length > 0 && !dateList.includes(cardStartDate)) {
+                    cardStartDate = dateList[0];
+                }
+                const directBookingUrl = `https://www.recreation.gov/camping/campsites/${siteId}${cardStartDate ? '?date=' + encodeURIComponent(cardStartDate) : ''}`;
 
-            const buttonLabel = isCloudMode ? '⚡ 1-Click Book / Lock' : '⚡ Auto-Hold (15m lock)';
+                const badgeMarkup = isContinuous
+                    ? `<span class="badge badge-success"> Entire Stay (${availCount}/${totalDays} days)</span>`
+                    : `<span class="badge badge-partial">${availCount}/${totalDays} Days Available</span>`;
 
-            return `
-                <div class="facility-card" data-campsite-id="${escapeHtml(String(siteId))}">
+                let rvBadge = '';
+                if (maxRv > 0) {
+                    if (currentRvFilter && maxRv >= currentRvFilter) {
+                        rvBadge = `<span class="badge badge-rv-fits" title="${escapeHtml(permittedEq)}"> Max RV: ${maxRv} ft </span>`;
+                    } else {
+                        rvBadge = `<span class="badge badge-rv" title="${escapeHtml(permittedEq)}"> Max RV: ${maxRv} ft</span>`;
+                    }
+                } else if (maxVeh > 0) {
+                    rvBadge = `<span class="badge badge-rv">🚗 Max Vehicle: ${maxVeh} ft</span>`;
+                }
+
+                const imageMarkup = imageUrl
+                    ? `<img class="facility-image-photo" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" loading="lazy" onerror="this.outerHTML='<div class=\\'facility-image\\'>🏕️</div>'">`
+                    : `<div class="facility-image">🏕️</div>`;
+
+                const buttonLabel = isCloudMode ? ' 1-Click Book / Lock' : ' Auto-Hold (15m lock)';
+
+                return `
+                <div class="facility-card" data-campsite-id="${escapeHtml(String(siteId))}" onclick="openCampsiteModal('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}', '${escapeHtml(availDates)}', ${isContinuous})" title="Click to view details, warnings & rules">
                     ${imageMarkup}
                     <div class="facility-content">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                             <div class="facility-name">${escapeHtml(name)}</div>
-                            ${badgeMarkup}
+                            <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                                ${rvBadge}
+                                ${badgeMarkup}
+                            </div>
                         </div>
-                        <div class="facility-meta">${escapeHtml(type)} • ${escapeHtml(loop)}</div>
-                        <div class="dates-preview">📅 Available: ${escapeHtml(availDates)}</div>
+                        <div class="facility-meta">${escapeHtml(type)} • ${escapeHtml(loop)}${permittedEq ? ' • <span style="font-size:11px;color:#64748b;" title="' + escapeHtml(permittedEq) + '">' + escapeHtml(permittedEq.slice(0, 32)) + (permittedEq.length > 32 ? '...' : '') + '</span>' : ''}</div>
+                        <div class="dates-preview">📅 Available on: ${escapeHtml(availDates)}</div>
                         
                         <div class="card-actions">
                             <button type="button" class="btn-hold" id="btn-hold-${escapeHtml(String(siteId))}" onclick="event.stopPropagation(); handleAutoHold('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}', '${escapeHtml(availDates)}', ${isContinuous})">
                                 ${buttonLabel}
+                            </button>
+                            <button type="button" class="btn-copy-code" style="padding: 4px 9px; font-size: 11px; border-radius: 6px;" onclick="event.stopPropagation(); openCampsiteModal('${escapeHtml(String(currentFacilityId))}', '${escapeHtml(String(siteId))}', '${escapeHtml(name)}', '${escapeHtml(availDates)}', ${isContinuous})">
+                                ℹ️ Details & Warnings
                             </button>
                             <a class="book-link" href="${escapeHtml(directBookingUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">
                                 Book on Rec.gov ↗
@@ -823,108 +1200,115 @@
                     </div>
                 </div>
             `;
-        }).join('');
+            }).join('');
 
-        responseBox.innerHTML = `
+            responseBox.innerHTML = `
             <span class="facilities-title">${escapeHtml(facilityName)}</span>
-            <span class="results-summary">Found ${campsites.length} available campsites${dateSummary}</span>
+            <span class="results-summary">Found ${campsites.length} available campsites${dateSummary}${rvSummary}</span>
             <div class="facility-grid">
                 ${itemsHtml}
             </div>
             ${renderBackToCampgroundButton()}
         `;
 
-        responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
-    }
+            responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
+        }
 
-    async function fetchCampsiteAvailability(facilityId, facilityName) {
-        currentFacilityId = facilityId;
-        currentFacilityName = facilityName;
+        async function fetchCampsiteAvailability(facilityId, facilityName) {
+            currentFacilityId = facilityId;
+            currentFacilityName = facilityName;
 
-        try {
-            currentDateRange = getSelectedDateRange();
-            if (!currentDateRange) {
-                alert("Please select both Start and End dates.");
-                return;
-            }
+            try {
+                currentDateRange = getSelectedDateRange();
+                if (!currentDateRange) {
+                    alert("Please select both Start and End dates.");
+                    return;
+                }
 
-            const isContinuous = continuousOnlyCheck.checked ? '&only_continuous=true' : '';
-            const queryUrl = `/location/facilities/${encodeURIComponent(facilityId)}/campsites/?start_date=${encodeURIComponent(currentDateRange.startDate)}&end_date=${encodeURIComponent(currentDateRange.endDate)}${isContinuous}`;
+                const rvLen = getRvLength();
+                const rvParam = rvLen ? `&rv_length=${encodeURIComponent(rvLen)}` : '';
+                const isContinuous = continuousOnlyCheck.checked ? '&only_continuous=true' : '';
+                const queryUrl = `/location/facilities/${encodeURIComponent(facilityId)}/campsites/?start_date=${encodeURIComponent(currentDateRange.startDate)}&end_date=${encodeURIComponent(currentDateRange.endDate)}${isContinuous}${rvParam}`;
 
-            responseBox.innerHTML = `
+                const rvText = rvLen ? ` (filtering RVs ≥ ${rvLen} ft)` : '';
+                responseBox.innerHTML = `
                 <div class="loading-state">
                     <div class="spinner"></div>
-                    <div>Scanning availability for <strong>${escapeHtml(facilityName)}</strong>...</div>
+                    <div>Scanning availability for <strong>${escapeHtml(facilityName)}</strong>${rvText}...</div>
                     <div style="font-size: 12px; color: #64748b;">Checking dates: ${currentDateRange.startDate} to ${currentDateRange.endDate}</div>
                 </div>
             `;
 
-            const response = await fetch(queryUrl);
-            const data = await response.json();
+                const response = await fetch(queryUrl);
+                const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.detail || data.error || `HTTP ${response.status}`);
-            }
+                if (!response.ok) {
+                    throw new Error(data.detail || data.error || `HTTP ${response.status}`);
+                }
 
-            const campsites = Array.isArray(data.campsites) ? data.campsites : [];
-            renderCampsiteList(facilityName, campsites);
+                const campsites = Array.isArray(data.campsites) ? data.campsites : [];
+                renderCampsiteList(facilityName, campsites);
 
-        } catch (error) {
-            responseBox.innerHTML = `
+            } catch (error) {
+                responseBox.innerHTML = `
                 <span class="facilities-title">Unable to check availability</span>
                 <div class="empty-alert">${escapeHtml(error.message)}</div>
                 ${renderBackToCampgroundButton()}
             `;
-            responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
+                responseBox.querySelector('[data-action="back-to-campground"]').addEventListener('click', showCampgroundMenu);
+            }
         }
-    }
 
-    async function loadFacilitiesPage(pageNumber) {
-        const stateCode = currentStateCode;
-        if (!stateCode) return;
+        async function loadFacilitiesPage(pageNumber) {
+            const stateCode = currentStateCode;
+            if (!stateCode) return;
 
-        const offset = (pageNumber - 1) * 20;
-        const url = `/location/facilities/?state=${encodeURIComponent(stateCode)}&offset=${offset}&limit=20`;
+            const rvLen = getRvLength();
+            const rvParam = rvLen ? `&vehicle_length=${encodeURIComponent(rvLen)}` : '';
+            const offset = (pageNumber - 1) * 20;
+            const url = `/location/facilities/?state=${encodeURIComponent(stateCode)}&offset=${offset}&limit=20${rvParam}`;
 
-        responseBox.innerHTML = `
+            const rvStateNote = rvLen ? ` (filtered for ≥ ${rvLen}ft RV)` : '';
+            responseBox.innerHTML = `
             <div class="loading-state">
                 <div class="spinner"></div>
-                <div>Fetching campgrounds for ${escapeHtml(stateCode)}...</div>
+                <div>Fetching campgrounds for ${escapeHtml(stateCode)}${rvStateNote}...</div>
             </div>
         `;
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.detail || data.error || `HTTP ${response.status}`);
-            }
+                if (!response.ok) {
+                    throw new Error(data.detail || data.error || `HTTP ${response.status}`);
+                }
 
-            const facilities = Array.isArray(data.facilities) ? data.facilities : [];
-            if (!facilities.length) {
-                responseBox.innerHTML = `
-                    <div class="empty-alert">No campgrounds found for ${escapeHtml(stateCode)}.</div>
+                const facilities = Array.isArray(data.facilities) ? data.facilities : [];
+                if (!facilities.length) {
+                    const rvEmptyNote = rvLen ? ` fitting a ${rvLen} ft RV` : '';
+                    responseBox.innerHTML = `
+                    <div class="empty-alert">No campgrounds found for ${escapeHtml(stateCode)}${rvEmptyNote}. Try a smaller RV length or clear the length filter.</div>
                 `;
-                return;
-            }
+                    return;
+                }
 
-            totalPages = Math.max(1, Math.ceil(Number(data.total_count || facilities.length) / 20));
+                totalPages = Math.max(1, Math.ceil(Number(data.total_count || facilities.length) / 20));
 
-            const items = facilities.map((facility) => {
-                const name = facility?.FacilityName || 'Campground';
-                const city = facility?.City || '';
-                const state = facility?.State || stateCode;
-                const price = facility?.Price ? ` • ${facility.Price}` : '';
-                const rating = facility?.Rating ? ` • ⭐ ${facility.Rating}` : '';
-                const imageUrl = facility?.FacilityImage;
+                const items = facilities.map((facility) => {
+                    const name = facility?.FacilityName || 'Campground';
+                    const city = facility?.City || '';
+                    const state = facility?.State || stateCode;
+                    const price = facility?.Price ? ` • ${facility.Price}` : '';
+                    const rating = facility?.Rating ? ` • ⭐ ${facility.Rating}` : '';
+                    const imageUrl = facility?.FacilityImage;
 
-                const imageMarkup = imageUrl
-                    ? `<img class="facility-image-photo" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" onerror="this.outerHTML='<div class=\\'facility-image\\'>🏕️</div>'">`
-                    : `<div class="facility-image">🏕️</div>`;
+                    const imageMarkup = imageUrl
+                        ? `<img class="facility-image-photo" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" onerror="this.outerHTML='<div class=\\'facility-image\\'>🏕️</div>'">`
+                        : `<div class="facility-image">🏕️</div>`;
 
-                const facilityId = facility?.FacilityID || '';
-                return `
+                    const facilityId = facility?.FacilityID || '';
+                    return `
                     <div class="facility-card" data-facility-id="${escapeHtml(String(facilityId))}" data-facility-name="${escapeHtml(name)}">
                         ${imageMarkup}
                         <div class="facility-content">
@@ -936,13 +1320,14 @@
                         </div>
                     </div>
                 `;
-            });
+                });
 
-            const stateName = stateSelect.options[stateSelect.selectedIndex]?.text || stateCode;
+                const stateName = stateSelect.options[stateSelect.selectedIndex]?.text || stateCode;
+                const rvFilterNote = rvLen ? ` • Filtered for RV: <strong>≥ ${rvLen} ft</strong>` : '';
 
-            responseBox.innerHTML = `
+                responseBox.innerHTML = `
                 <span class="facilities-title">${escapeHtml(stateName)} Campgrounds</span>
-                <span class="results-summary">Showing ${facilities.length} campgrounds. Click a campground to check availability.</span>
+                <span class="results-summary">Showing ${facilities.length} campgrounds${rvFilterNote}. Click a campground to check availability.</span>
                 <div class="facility-grid">
                     ${items.join('')}
                 </div>
@@ -953,60 +1338,282 @@
                 </div>
             `;
 
-            responseBox.querySelectorAll('.facility-card').forEach((card) => {
-                card.addEventListener('click', () => {
-                    const facilityId = card.dataset.facilityId;
-                    const facilityName = card.dataset.facilityName || 'Campground';
-                    if (facilityId) {
-                        fetchCampsiteAvailability(facilityId, facilityName);
-                    }
+                responseBox.querySelectorAll('.facility-card').forEach((card) => {
+                    card.addEventListener('click', () => {
+                        const facilityId = card.dataset.facilityId;
+                        const facilityName = card.dataset.facilityName || 'Campground';
+                        if (facilityId) {
+                            fetchCampsiteAvailability(facilityId, facilityName);
+                        }
+                    });
                 });
-            });
 
-            responseBox.querySelectorAll('button[data-page]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const nextPage = Number(button.dataset.page);
-                    if (nextPage >= 1 && nextPage <= totalPages) {
-                        currentPage = nextPage;
-                        loadFacilitiesPage(nextPage);
-                    }
+                responseBox.querySelectorAll('button[data-page]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const nextPage = Number(button.dataset.page);
+                        if (nextPage >= 1 && nextPage <= totalPages) {
+                            currentPage = nextPage;
+                            loadFacilitiesPage(nextPage);
+                        }
+                    });
                 });
-            });
 
-        } catch (error) {
-            responseBox.innerHTML = `
+            } catch (error) {
+                responseBox.innerHTML = `
                 <div class="empty-alert">Unable to load campgrounds: ${escapeHtml(error.message)}</div>
             `;
-        }
-    }
-
-    stateSelect.addEventListener('change', async function () {
-        currentStateCode = this.value;
-        if (!currentStateCode) {
-            responseBox.innerHTML = 'Select a state to explore campgrounds.';
-            return;
+            }
         }
 
-        currentPage = 1;
-        totalPages = 1;
-        await loadFacilitiesPage(1);
-    });
+        stateSelect.addEventListener('change', async function () {
+            currentStateCode = this.value;
+            if (!currentStateCode) {
+                responseBox.innerHTML = 'Select a state to explore campgrounds.';
+                return;
+            }
 
-    continuousOnlyCheck.addEventListener('change', () => {
-        if (currentFacilityId && currentFacilityName) {
-            fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
+            currentPage = 1;
+            totalPages = 1;
+            await loadFacilitiesPage(1);
+        });
+
+        continuousOnlyCheck.addEventListener('change', () => {
+            if (currentFacilityId && currentFacilityName) {
+                fetchCampsiteAvailability(currentFacilityId, currentFacilityName);
+            }
+        });
+
+        // Initial session check
+        checkSessionStatus();
+
+        // Auto-load campgrounds for default selected state
+        if (stateSelect.value) {
+            currentStateCode = stateSelect.value;
+            loadFacilitiesPage(1);
         }
-    });
 
-    // Initial session check
-    checkSessionStatus();
+        // Campsite Details & Warnings Modal Handler
+        async function openCampsiteModal(facilityId, campsiteId, campsiteName, availDates = '', isContinuous = true) {
+            const modal = document.getElementById('campsite-modal');
+            const modalSiteName = document.getElementById('modal-site-name');
+            const modalCgName = document.getElementById('modal-campground-name');
+            const modalBody = document.getElementById('modal-body-content');
+            const modalHoldBtn = document.getElementById('modal-hold-btn');
+            const modalDirectLink = document.getElementById('modal-direct-link');
 
-    // Auto-load campgrounds for default selected state
-    if (stateSelect.value) {
-        currentStateCode = stateSelect.value;
-        loadFacilitiesPage(1);
-    }
-</script>
+            if (!modal) return;
+
+            modalSiteName.textContent = campsiteName || `Campsite #${campsiteId}`;
+            modalCgName.textContent = currentFacilityName || 'Loading campground info...';
+
+            if (modalHoldBtn) {
+                modalHoldBtn.innerHTML = isCloudMode ? ' 1-Click Book / Lock' : ' Auto-Hold (15m lock)';
+                modalHoldBtn.onclick = () => {
+                    handleAutoHold(facilityId, campsiteId, campsiteName, availDates, isContinuous);
+                };
+            }
+
+            const dateRange = getSelectedDateRange();
+            let directUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}`;
+            if (dateRange && dateRange.startDate) {
+                directUrl += `?date=${encodeURIComponent(dateRange.startDate)}`;
+            }
+            if (modalDirectLink) modalDirectLink.href = directUrl;
+
+            modalBody.innerHTML = `
+            <div class="loading-state" style="padding: 35px 10px;">
+                <div class="spinner"></div>
+                <div>Fetching live details, warnings & equipment rules from Recreation.gov...</div>
+            </div>
+        `;
+
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const resp = await fetch(`/location/facilities/${encodeURIComponent(facilityId)}/campsites/${encodeURIComponent(campsiteId)}/details`);
+                const json = await resp.json();
+
+                if (!resp.ok) {
+                    throw new Error(json.detail || `HTTP ${resp.status}`);
+                }
+
+                const data = json.data || {};
+                modalCgName.textContent = data.campground_name || currentFacilityName || 'Recreation.gov Campground';
+
+                let contentHtml = '';
+
+                // 1. Alerts from Recreation.gov (e.g. construction warnings, urgent notices)
+                if (data.alerts && data.alerts.length > 0) {
+                    contentHtml += data.alerts.map(a => `
+                    <div class="alert-urgent-box">
+                        <strong>⚠️ ${escapeHtml(a.title || 'Campground Alert')}</strong>
+                        <div>${a.body}</div>
+                    </div>
+                `).join('');
+                }
+
+                // 2. Booking Window
+                if (data.booking_window) {
+                    contentHtml += `
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:#1e40af; display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:16px;">📅</span>
+                        <div><b>Booking Window:</b> ${escapeHtml(data.booking_window)}</div>
+                    </div>
+                `;
+                }
+
+                // 3. Quick Specs Grid
+                const sd = data.site_details || {};
+                const ed = data.equipment_details || {};
+
+                contentHtml += `
+                <div class="section-heading">📋 Campsite & Driveway Specifications</div>
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <div class="spec-label">Check-in / Check-out</div>
+                        <div class="spec-val">${escapeHtml(sd['Checkin Time'] || '12:00 PM')} / ${escapeHtml(sd['Checkout Time'] || '11:00 AM')}</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Max Vehicle Length</div>
+                        <div class="spec-val">${data.max_vehicle_length ? data.max_vehicle_length + ' ft' : (ed['Max Vehicle Length'] ? ed['Max Vehicle Length'] + ' ft' : 'Not specified')}</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Driveway Entry / Surface</div>
+                        <div class="spec-val">${escapeHtml(ed['Driveway Entry'] || 'Standard')} • ${escapeHtml(ed['Driveway Surface'] || 'Paved')}</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Driveway Length / Width</div>
+                        <div class="spec-val">${escapeHtml(ed['Driveway Length'] ? ed['Driveway Length'] + ' ft' : (ed['Site Length'] ? ed['Site Length'] + ' ft' : 'N/A'))} × ${escapeHtml(ed['Site Width'] ? ed['Site Width'] + ' ft' : 'N/A')}</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Capacity (People / Vehicles)</div>
+                        <div class="spec-val">Up to ${escapeHtml(sd['Max Num of People'] || '6')} people • ${escapeHtml(ed['Max Num of Vehicles'] || '2')} vehicles</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-label">Site Access / Pets</div>
+                        <div class="spec-val">${escapeHtml(sd['Site Access'] || 'Drive-In')} • Pets: ${escapeHtml(sd['Pets Allowed'] || 'Yes')}</div>
+                    </div>
+                </div>
+            `;
+
+                // 4. Permitted Equipment
+                if (data.permitted_equipment && data.permitted_equipment.length > 0) {
+                    contentHtml += `
+                    <div class="section-heading"> Permitted Equipment & Max Lengths</div>
+                    <div style="margin-bottom: 14px;">
+                        ${data.permitted_equipment.map(eq => `
+                            <span class="equipment-chip">
+                                ${eq.equipment_name.includes('RV') ? '' : (eq.equipment_name.includes('Trailer') ? '' : '')}
+                                <b>${escapeHtml(eq.equipment_name)}</b>: ${eq.max_length ? eq.max_length + ' ft max' : 'Allowed'}
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+                }
+
+                // 5. Campsite Specific Notices & Warnings
+                if (data.campsite_notices && data.campsite_notices.length > 0) {
+                    contentHtml += `
+                    <div class="section-heading">⚠️ Campsite Rules & Notice Requirements</div>
+                    <div style="margin-bottom: 14px;">
+                        ${data.campsite_notices.map(n => `
+                            <div class="notice-card">${n.text}</div>
+                        `).join('')}
+                    </div>
+                `;
+                }
+
+                // 6. Campground Warnings & Rules
+                if (data.campground_notices && data.campground_notices.length > 0) {
+                    contentHtml += `
+                    <div class="section-heading">🏕️ Campground Notices, Fees & Wildlife Rules</div>
+                    <div style="margin-bottom: 14px;">
+                        ${data.campground_notices.map(n => `
+                            <div class="notice-card">${n.text}</div>
+                        `).join('')}
+                    </div>
+                `;
+                }
+
+                // 7. Amenities
+                if (data.amenities && data.amenities.length > 0) {
+                    contentHtml += `
+                    <div class="section-heading">✨ Amenities</div>
+                    <div style="margin-bottom: 10px;">
+                        ${data.amenities.map(am => `<span class="amenity-chip">✓ ${escapeHtml(am)}</span>`).join('')}
+                    </div>
+                `;
+                }
+
+                modalBody.innerHTML = contentHtml;
+
+            } catch (err) {
+                modalBody.innerHTML = `
+                <div class="empty-alert">
+                    Unable to load campsite details: ${escapeHtml(err.message)}
+                </div>
+            `;
+            }
+        }
+
+        function closeCampsiteModal(e) {
+            if (e && e.target && e.target.id !== 'campsite-modal' && !e.target.classList.contains('btn-modal-close') && e.target.tagName !== 'BUTTON') {
+                return;
+            }
+            const modal = document.getElementById('campsite-modal');
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Escape key closes modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('campsite-modal');
+                if (modal && modal.classList.contains('open')) {
+                    closeCampsiteModal();
+                }
+            }
+        });
+    </script>
+
+    <!-- Campsite Details & Warnings Modal -->
+    <div id="campsite-modal" class="modal-backdrop" onclick="closeCampsiteModal(event)">
+        <div class="modal-dialog" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-header-title" id="modal-site-name">Campsite Details</div>
+                    <div class="modal-header-sub" id="modal-campground-name">Loading campground info...</div>
+                </div>
+                <button type="button" class="btn-modal-close" onclick="closeCampsiteModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body-content">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <div>Fetching live details & warnings from Recreation.gov...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-hold" id="modal-hold-btn"
+                    style="padding: 7px 14px; font-size: 12.5px;">
+                    Auto-Hold (15m lock)
+                </button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a id="modal-direct-link" class="book-link" href="#" target="_blank" rel="noopener noreferrer"
+                        style="font-size: 12.5px;">
+                        Book on Rec.gov ↗
+                    </a>
+                    <button type="button" class="btn-copy-code" onclick="closeCampsiteModal()"
+                        style="padding: 6px 12px; font-size: 12px;">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
+
 </html>
