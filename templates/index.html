@@ -987,6 +987,16 @@
             countdownInterval = setInterval(updateTimer, 1000);
         }
 
+        function buildCampsiteBookingUrl(campsiteId, startDate, endDate) {
+            if (!campsiteId) return '#';
+            let url = `https://www.recreation.gov/camping/campsites/${encodeURIComponent(campsiteId)}`;
+            const params = new URLSearchParams();
+            if (startDate) params.set('start_date', startDate);
+            if (endDate) params.set('end_date', endDate);
+            const query = params.toString();
+            return query ? `${url}?${query}` : url;
+        }
+
         async function handleAutoHold(facilityId, campsiteId, campsiteName, availDates = '', isContinuous = true) {
             const dateRange = getSelectedDateRange();
             if (!dateRange) {
@@ -1012,7 +1022,7 @@
                 }
             }
 
-            const directBookingUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}?date=${encodeURIComponent(targetStartDate)}`;
+            const directBookingUrl = buildCampsiteBookingUrl(campsiteId, targetStartDate, targetEndDate);
             const btn = document.getElementById(`btn-hold-${campsiteId}`);
 
             // Cloud Mode (Render Deployment):
@@ -1146,10 +1156,14 @@
 
                 const dateList = (availDates || '').split(',').map(d => d.trim()).filter(Boolean).sort();
                 let cardStartDate = currentDateRange ? currentDateRange.startDate : '';
+                let cardEndDate = currentDateRange ? currentDateRange.endDate : '';
                 if (!isContinuous && dateList.length > 0 && !dateList.includes(cardStartDate)) {
                     cardStartDate = dateList[0];
+                    const nextD = new Date(cardStartDate);
+                    nextD.setDate(nextD.getDate() + 1);
+                    cardEndDate = nextD.toISOString().split('T')[0];
                 }
-                const directBookingUrl = `https://www.recreation.gov/camping/campsites/${siteId}${cardStartDate ? '?date=' + encodeURIComponent(cardStartDate) : ''}`;
+                const directBookingUrl = buildCampsiteBookingUrl(siteId, cardStartDate, cardEndDate);
 
                 const badgeMarkup = isContinuous
                     ? `<span class="badge badge-success"> Entire Stay (${availCount}/${totalDays} days)</span>`
@@ -1414,10 +1428,9 @@
             }
 
             const dateRange = getSelectedDateRange();
-            let directUrl = `https://www.recreation.gov/camping/campsites/${campsiteId}`;
-            if (dateRange && dateRange.startDate) {
-                directUrl += `?date=${encodeURIComponent(dateRange.startDate)}`;
-            }
+            const modalStartDate = dateRange ? dateRange.startDate : '';
+            const modalEndDate = dateRange ? dateRange.endDate : '';
+            const directUrl = buildCampsiteBookingUrl(campsiteId, modalStartDate, modalEndDate);
             if (modalDirectLink) modalDirectLink.href = directUrl;
 
             modalBody.innerHTML = `

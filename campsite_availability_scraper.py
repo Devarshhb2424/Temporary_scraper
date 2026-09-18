@@ -485,9 +485,10 @@ class CampsiteAvailabilityScraper:
                 date_key = f"{date_str}T00:00:00Z"
                 status = avail_map.get(date_key, "Unknown")
 
+                date_query = f"?start_date={start_date}&end_date={end_date}" if start_date and end_date else ""
                 if status == "Available":
                     available_dates_for_site.append(date_str)
-                    booking_url = f"https://www.recreation.gov/camping/campsites/{site_id}"
+                    booking_url = f"https://www.recreation.gov/camping/campsites/{site_id}{date_query}"
                     detailed_rows.append({
                         "campground_name": campground_name,
                         "facility_id": facility_id,
@@ -510,6 +511,7 @@ class CampsiteAvailabilityScraper:
                 # Real campsite photo or campground photo fallback
                 site_photo = site_images.get(site_id) or campground_img
 
+                date_query = f"?start_date={start_date}&end_date={end_date}" if start_date and end_date else ""
                 summary_rows.append({
                     "campground_name": campground_name,
                     "facility_id": facility_id,
@@ -525,7 +527,7 @@ class CampsiteAvailabilityScraper:
                     "is_continuous_stay": is_fully_available,
                     "available_dates": ", ".join(available_dates_for_site),
                     "image_url": site_photo,
-                    "booking_url": f"https://www.recreation.gov/camping/campsites/{site_id}"
+                    "booking_url": f"https://www.recreation.gov/camping/campsites/{site_id}{date_query}"
                 })
 
         df_detailed = pd.DataFrame(detailed_rows)
