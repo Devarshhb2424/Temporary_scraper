@@ -485,7 +485,7 @@ class CampsiteAvailabilityScraper:
                 date_key = f"{date_str}T00:00:00Z"
                 status = avail_map.get(date_key, "Unknown")
 
-                date_query = f"?start_date={start_date}&end_date={end_date}" if start_date and end_date else ""
+                date_query = f"?start_date={start_date_str}&end_date={end_date_str}" if start_date_str and end_date_str else ""
                 if status == "Available":
                     available_dates_for_site.append(date_str)
                     booking_url = f"https://www.recreation.gov/camping/campsites/{site_id}{date_query}"
@@ -511,7 +511,7 @@ class CampsiteAvailabilityScraper:
                 # Real campsite photo or campground photo fallback
                 site_photo = site_images.get(site_id) or campground_img
 
-                date_query = f"?start_date={start_date}&end_date={end_date}" if start_date and end_date else ""
+                date_query = f"?start_date={start_date_str}&end_date={end_date_str}" if start_date_str and end_date_str else ""
                 summary_rows.append({
                     "campground_name": campground_name,
                     "facility_id": facility_id,
